@@ -11,15 +11,12 @@ data class Success<A>(val value: A) : Result<Nothing, A>()
 data class Failure<E>(val error: E) : Result<E, Nothing>()
 
 typealias BIO<E, A> = Eval<Result<E, A>>
-typealias Task<A> = Eval<Success<A>>
 
 fun <E, A> fromResult(r: Result<E, A>): BIO<E, A> = later { r }
 
 fun <A> just(v: A): Task<A> = now(Success(v))
 
 fun <E> failure(e: E): BIO<E, Nothing> = now(Failure(e))
-
-fun <A> task(f: () -> A): Task<A> = later { Success(f()) }
 
 inline fun <A> unsafe(crossinline f: () -> A): BIO<Throwable, A> = later {
     try {
