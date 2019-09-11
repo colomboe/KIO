@@ -6,11 +6,10 @@ import it.msec.sparrow.EvalFn.execute
 import it.msec.sparrow.EvalFn.later
 import it.msec.sparrow.EvalFn.now
 
-sealed class Result<out E, out A>
-data class Success<A>(val value: A) : Result<Nothing, A>()
-data class Failure<E>(val error: E) : Result<E, Nothing>()
-
 typealias BIO<E, A> = Eval<Result<E, A>>
+typealias Task<A> = Eval<Success<A>>
+
+fun <A> task(f: () -> A): Task<A> = later { Success(f()) }
 
 fun <E, A> fromResult(r: Result<E, A>): BIO<E, A> = later { r }
 
