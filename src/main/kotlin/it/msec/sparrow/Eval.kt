@@ -1,18 +1,20 @@
 package it.msec.sparrow
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import java.util.*
 
 sealed class Eval<out A>
 data class Eager<A>(val value: A): Eval<A>()
-data class Lazy<A>(val valueF: () -> A): Eval<A>()
-data class FlatMapped<IN, OUT>(val flatMapF: (IN) -> Eval<OUT>, val prev: Eval<IN>): Eval<OUT>()
+data class Lazy<A>(val valueF: suspend () -> A): Eval<A>()
+data class FlatMapped<IN, OUT>(val flatMapF: suspend (IN) -> Eval<OUT>, val prev: Eval<IN>): Eval<OUT>()
 
 object EvalFn {
 
     fun <A> now(a: A) = Eager(a)
-    fun <A> later(f: () -> A) = Lazy(f)
+    fun <A> later(f: suspend CoroutineScope.() -> A) = Lazy { coroutineScope(f) }
     fun <IN, OUT> Eval<IN>.evalMap(f: (IN) -> OUT): Eval<OUT> = FlatMapped( { Eager(f(it)) }, this)
-    fun <IN, OUT> Eval<IN>.evalFlatMap(f: (IN) -> Eval<OUT>): Eval<OUT> = FlatMapped(f, this)
+    fun <IN, OUT> Eval<IN>.evalFlatMap(f: suspend (IN) -> Eval<OUT>): Eval<OUT> = FlatMapped(f, this)
 
     private fun explode(e: Eval<*>): Stack<Eval<*>> {
         val stack = Stack<Eval<*>>()
@@ -26,10 +28,10 @@ object EvalFn {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <OUT> Eval<OUT>.execute(): OUT {
+    suspend fun <OUT> Eval<OUT>.execute(): OUT {
         val stack = explode(this)
         var currentValue: Any? = null
-        while(stack.isNotEmpty()) {
+        while (stack.isNotEmpty()) {
             currentValue = when (val e = stack.pop()) {
                 is Eager<*> -> e.value
                 is Lazy<*> -> e.valueF()

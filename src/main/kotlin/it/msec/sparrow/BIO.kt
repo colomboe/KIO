@@ -5,11 +5,14 @@ import it.msec.sparrow.EvalFn.evalMap
 import it.msec.sparrow.EvalFn.execute
 import it.msec.sparrow.EvalFn.later
 import it.msec.sparrow.EvalFn.now
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 typealias BIO<E, A> = Eval<Result<E, A>>
 typealias Task<A> = Eval<Success<A>>
 
-fun <A> task(f: () -> A): Task<A> = later { Success(f()) }
+fun <A> task(f: suspend () -> A): Task<A> = later { Success(f()) }
 
 fun <E, A> fromResult(r: Result<E, A>): BIO<E, A> = later { r }
 
@@ -17,7 +20,7 @@ fun <A> just(v: A): Task<A> = now(Success(v))
 
 fun <E> failure(e: E): BIO<E, Nothing> = now(Failure(e))
 
-inline fun <A> unsafe(crossinline f: () -> A): BIO<Throwable, A> = later {
+inline fun <A> unsafe(crossinline f: suspend () -> A): BIO<Throwable, A> = later {
     try {
         Success(f())
     } catch (t: Throwable) {
@@ -69,7 +72,10 @@ inline fun <E, A> BIO<E, A>.tryRecover(crossinline f: (E) -> BIO<E, A>): BIO<E, 
     }
 }
 
-fun <E, A> BIO<E, A>.unsafeRunSync() = this.execute()
+fun <E, A> BIO<E, A>.unsafeRunSync(ctx: CoroutineContext = EmptyCoroutineContext) =
+        runBlocking(ctx) { this@unsafeRunSync.execute() }
+
+suspend fun <E, A> BIO<E, A>.unsafeRunSuspended() = this.execute()
 
 fun <E, A, C> BIO<E, A>.fold(e: (E) -> C, f: (A) -> C): Task<C> =
     map(f).recover(e)
