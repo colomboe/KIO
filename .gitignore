@@ -16,6 +16,11 @@
 *.iml
 *.ipr
 
+### Gradle ###
+.gradle
+/build/
+/out/
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
