@@ -2,6 +2,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.50'
 }
 
+apply plugin: 'maven'
+
 group 'it.msec'
 version '1.0-SNAPSHOT'
 
