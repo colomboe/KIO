@@ -36,7 +36,7 @@ object EvalFn {
                 is Eager<*> -> e.value
                 is Lazy<*> -> e.valueF()
                 is FlatMapped<*, *> -> {
-                    val returnedEval = (e.flatMapF as (Any?) -> Eval<*>)(currentValue)
+                    val returnedEval = (e.flatMapF as suspend (Any?) -> Eval<*>)(currentValue)
                     stack.addAll(explode(returnedEval))
                 }
             }
