@@ -23,4 +23,22 @@ class BIOTest {
 
         assertThat(x).isEqualTo(Success("abc"))
     }
+
+    @Test
+    fun happyPathEnv() {
+
+        data class MyEnv(val config: String = "MyLittleConfig")
+
+        val x: EnvIO<MyEnv, Throwable, String> =
+                just(33)
+                .map { it * 2 }
+                .accessEnv { env: MyEnv -> env.config  }
+                .flatMap { s -> unsafe { println(s) } }
+                .map { "Done" }
+
+        val result = x.unsafeRunSync(MyEnv())
+        println(result)
+
+    }
+
 }
