@@ -1,4 +1,4 @@
-# KIO
+# KIO [![Build Status](https://travis-ci.org/colomboe/KIO.svg?branch=master)](https://travis-ci.org/colomboe/KIO)
 A simple, lightweight IO monad implementation for Kotlin inspired to the effect-rotation based ZIO library for Scala.
 
 ### Introduction
