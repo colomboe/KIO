@@ -15,7 +15,7 @@ import it.msec.kio.result.Success
 
 typealias KIO<R, E, A> = Eval<R, Result<E, A>>
 typealias BIO<E, A> = KIO<Any, E, A>
-typealias EnvTask<R, A> = Eval<R, Success<A>>
+typealias EnvTask<R, A> = Eval<R, Result<Nothing, A>>
 typealias Task<A> = EnvTask<Any, A>
 
 fun <A> task(f: suspend () -> A): Task<A> = lazy { Success(f()) }
@@ -52,10 +52,13 @@ inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: suspend (A) -> KIO<R
     }
 }
 
+inline fun <R, A> askEnv(crossinline f: suspend (R) -> A): KIO<R, Nothing, A> =
+        evalAccessEnv { justEnv(f(it)) }
+
 inline fun <R, E, A, B> KIO<R, E, A>.flatMapEnv(crossinline f: suspend (R) -> KIO<R, E, B>): KIO<R, E, B> =
         evalAccessEnv { f(it) }
 
-fun <R, E, A, B> KIO<R, E, A>.mapEnv(f: suspend (R) -> B): KIO<R, E, B> =
+inline fun <R, E, A, B> KIO<R, E, A>.mapEnv(crossinline f: suspend (R) -> B): KIO<R, E, B> =
         evalAccessEnv { justEnv(f(it)) }
 
 inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L, A> = evalMap {
@@ -73,7 +76,7 @@ fun <R, E, A> KIO<R, E, A>.swap(): KIO<R, A, E> = evalMap {
 }
 
 fun <R, A> EnvTask<R, A>.attempt(): KIO<R, Throwable, A> =
-        evalAccessEnv { env -> unsafeEnv { this@attempt.execute(env).value } }
+        evalAccessEnv { env -> unsafeEnv { (this@attempt.execute(env) as Success<A>).value } }
 
 
 inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): EnvTask<R, A> = evalFlatMap {
