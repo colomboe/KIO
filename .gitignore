@@ -20,7 +20,6 @@
 .gradle
 /build/
 /out/
-/gradle/
 
 ### NetBeans ###
 /nbproject/private/
