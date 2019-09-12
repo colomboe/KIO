@@ -1,7 +1,7 @@
 # KIO
 A simple, lightweight IO monad implementation for Kotlin inspired to the effect-rotation based ZIO library for Scala.
 
-###Introduction
+### Introduction
 Many functional programming languages (like Clojure and F#), even if they could (more or less) support the 
 Haskell typeclasses-like FP approach, doesn't rely on it in order to provide a
 functional programming environment for the developers.
@@ -17,7 +17,7 @@ of __algebraic data types__ (ADTs).
  Haskell/Scala typeclass categories. If you are looking for this type of library, 
  take a look at [Arrow](https://arrow-kt.io) instead.
 
-###Features
+### Features
 KIO provides a IO monad-like implementation specific for Kotlin with the following features:
  - Small and lightweight;
  - Everything is lazy (deferred);
