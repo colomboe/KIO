@@ -5,4 +5,4 @@ before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
 script:
-  - ./gradlew --no-daemon test build bintrayUpload
+  - ./gradlew test build bintrayUpload
