@@ -15,7 +15,7 @@ import it.msec.kio.result.Success
 
 typealias KIO<R, E, A> = Eval<R, Result<E, A>>
 typealias BIO<E, A> = KIO<Any, E, A>
-typealias EnvTask<R, A> = Eval<R, Result<Nothing, A>>
+typealias EnvTask<R, A> = KIO<R, Nothing, A>
 typealias Task<A> = EnvTask<Any, A>
 
 fun <A> task(f: suspend () -> A): Task<A> = lazy { Success(f()) }
