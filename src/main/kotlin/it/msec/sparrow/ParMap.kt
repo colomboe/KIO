@@ -4,7 +4,7 @@ import it.msec.sparrow.EvalFn.laterEnv
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")
-fun <R, E, A1, A2, B> parMap(a: EnvIO<R, E, A1>, b: EnvIO<R, E, A2>, f: (A1, A2) -> B): EnvIO<R, List<E>, B> =
+fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, f: (A1, A2) -> B): KIO<R, List<E>, B> =
         laterEnv { env ->
             val results = listOf(a, b)
                     .map { async { it.unsafeRunSuspended(env) } }
@@ -17,7 +17,7 @@ fun <R, E, A1, A2, B> parMap(a: EnvIO<R, E, A1>, b: EnvIO<R, E, A2>, f: (A1, A2)
         }
 
 @Suppress("UNCHECKED_CAST")
-fun <R, E, A1, A2, A3, B> parMap(a: EnvIO<R, E, A1>, b: EnvIO<R, E, A2>, c: EnvIO<R, E, A3>, f: (A1, A2, A3) -> B): EnvIO<R, List<E>, B> =
+fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
         laterEnv { env ->
 
             val results = listOf(a, b, c)

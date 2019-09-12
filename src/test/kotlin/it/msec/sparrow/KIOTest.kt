@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.Test
 
-class BIOTest {
+class KIOTest {
 
     @Test
     fun happyPath() {
@@ -29,11 +29,12 @@ class BIOTest {
 
         data class MyEnv(val config: String = "MyLittleConfig")
 
-        val x: EnvIO<MyEnv, Throwable, String> =
-                just(33)
+        val x =
+                justEnv<MyEnv, Int>(33)
                 .map { it * 2 }
-                .accessEnv { env: MyEnv -> env.config  }
+                .mapEnv { env -> env.config  }
                 .flatMap { s -> unsafe { println(s) } }
+                .flatMapEnv { env -> unsafe { println(env.config) } }
                 .map { "Done" }
 
         val result = x.unsafeRunSync(MyEnv())
