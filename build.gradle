@@ -1,11 +1,21 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.50'
+    id "com.jfrog.bintray" version "1.7"
 }
 
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
+archivesBaseName 'kio'
 group 'it.msec'
 version '1.0-SNAPSHOT'
+description 'KIO library'
 
 repositories {
     mavenCentral()
@@ -24,4 +34,33 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+publishing {
+    publications {
+        KIOPublication(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['KIOPublication']
+    publish = true
+    pkg {
+        repo = 'kio'
+        name = 'kio'
+        licenses = ['GPL-3.0']
+        vcsUrl = 'https://github.com/colomboe/kio.git'
+        version {
+            name = project.version
+            desc = project.description
+            released  = new Date()
+        }
+    }
 }
