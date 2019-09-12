@@ -1,4 +1,4 @@
-package it.msec.sparrow
+package it.msec.kio
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope

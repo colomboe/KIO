@@ -1,4 +1,4 @@
-package it.msec.sparrow
+package it.msec.kio
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package it.msec.sparrow
+package it.msec.kio
 
 sealed class Result<out E, out A>
 data class Success<A>(val value: A) : Result<Nothing, A>()

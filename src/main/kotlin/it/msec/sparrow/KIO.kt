@@ -1,11 +1,11 @@
-package it.msec.sparrow
+package it.msec.kio
 
-import it.msec.sparrow.EvalFn.eager
-import it.msec.sparrow.EvalFn.evalAccessEnv
-import it.msec.sparrow.EvalFn.evalFlatMap
-import it.msec.sparrow.EvalFn.evalMap
-import it.msec.sparrow.EvalFn.execute
-import it.msec.sparrow.EvalFn.lazy
+import it.msec.kio.EvalFn.eager
+import it.msec.kio.EvalFn.evalAccessEnv
+import it.msec.kio.EvalFn.evalFlatMap
+import it.msec.kio.EvalFn.evalMap
+import it.msec.kio.EvalFn.execute
+import it.msec.kio.EvalFn.lazy
 
 typealias KIO<R, E, A> = Eval<R, Result<E, A>>
 typealias BIO<E, A> = KIO<Any, E, A>

@@ -1,6 +1,6 @@
-package it.msec.sparrow
+package it.msec.kio
 
-import it.msec.sparrow.EvalFn.laterEnv
+import it.msec.kio.EvalFn.laterEnv
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")

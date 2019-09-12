@@ -1,6 +1,6 @@
-package it.msec.sparrow
+package it.msec.kio
 
-import it.msec.sparrow.EvalFn.execute
+import it.msec.kio.EvalFn.execute
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
