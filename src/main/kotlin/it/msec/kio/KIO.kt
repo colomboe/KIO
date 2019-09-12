@@ -55,12 +55,6 @@ inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: suspend (A) -> KIO<R
 inline fun <R, A> askEnv(crossinline f: suspend (R) -> A): KIO<R, Nothing, A> =
         evalAccessEnv { justEnv(f(it)) }
 
-inline fun <R, E, A, B> KIO<R, E, A>.flatMapEnv(crossinline f: suspend (R) -> KIO<R, E, B>): KIO<R, E, B> =
-        evalAccessEnv { f(it) }
-
-inline fun <R, E, A, B> KIO<R, E, A>.mapEnv(crossinline f: suspend (R) -> B): KIO<R, E, B> =
-        evalAccessEnv { justEnv(f(it)) }
-
 inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L, A> = evalMap {
     when (it) {
         is Success -> it

@@ -34,9 +34,8 @@ class KIOTest {
         val x =
                 justEnv<MyEnv, Int>(33)
                 .map { it * 2 }
-                .mapEnv { env -> env.config  }
-                .flatMap { s -> unsafe { println(s) } }
-                .flatMapEnv { env -> unsafe { println(env.config) } }
+                .flatMapT2 { i -> askEnv { env: MyEnv -> env.config } }
+                .flatMap { (i , s) -> unsafe { println(i.toString() + s) } }
                 .map { "Done" }
 
         val result = x.unsafeRunSync(MyEnv())
