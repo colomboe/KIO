@@ -1,4 +1,4 @@
-package it.msec.kio
+package it.msec.kio.core
 
 fun <A> identity(a: A) = a
 

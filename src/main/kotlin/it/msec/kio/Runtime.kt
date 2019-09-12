@@ -1,6 +1,6 @@
 package it.msec.kio
 
-import it.msec.kio.EvalFn.execute
+import it.msec.kio.eval.EvalFn.execute
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext

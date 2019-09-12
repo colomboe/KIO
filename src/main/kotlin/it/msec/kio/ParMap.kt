@@ -1,6 +1,8 @@
 package it.msec.kio
 
-import it.msec.kio.EvalFn.laterEnv
+import it.msec.kio.eval.EvalFn.laterEnv
+import it.msec.kio.result.Failure
+import it.msec.kio.result.Success
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")

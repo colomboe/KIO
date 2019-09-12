@@ -1,7 +1,9 @@
-package it.msec.kio
+package it.msec.kio.kio
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import it.msec.kio.*
+import it.msec.kio.result.Success
 import org.junit.Test
 
 class KIOTest {

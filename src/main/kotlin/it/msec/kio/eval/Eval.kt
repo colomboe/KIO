@@ -1,4 +1,4 @@
-package it.msec.kio
+package it.msec.kio.eval
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +17,7 @@ object EvalFn {
     fun <ENV, OUT> evalAccessEnv(f: suspend CoroutineScope.(ENV) -> Eval<ENV, OUT>) = EnvAccessed { env: ENV -> coroutineScope { f(env) } }
     fun <ENV, OUT> laterEnv(f: suspend CoroutineScope.(ENV) -> OUT) = evalAccessEnv<ENV, OUT> { env -> eager(f(env)) }
 
-    fun <ENV, IN, OUT> Eval<ENV, IN>.evalMap(f: (IN) -> OUT): Eval<ENV, OUT> = FlatMapped( { Eager<ENV, OUT>(f(it)) }, this)
+    fun <ENV, IN, OUT> Eval<ENV, IN>.evalMap(f: (IN) -> OUT): Eval<ENV, OUT> = FlatMapped({ Eager<ENV, OUT>(f(it)) }, this)
     fun <ENV, IN, OUT> Eval<ENV, IN>.evalFlatMap(f: suspend (IN) -> Eval<ENV, OUT>): Eval<ENV, OUT> = FlatMapped(f, this)
 
     private fun explode(e: Eval<*, *>): Stack<Eval<*, *>> {

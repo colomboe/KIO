@@ -1,5 +1,6 @@
-package it.msec.kio
+package it.msec.kio.kio
 
+import it.msec.kio.*
 import org.junit.Test
 
 class OptionTest {
