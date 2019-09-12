@@ -3,7 +3,7 @@ A simple, lightweight IO monad implementation for Kotlin inspired to the effect-
 
 ### Introduction
 Many functional programming languages (like Clojure and F#), even if they could (more or less) support the 
-Haskell typeclasses-like FP approach, doesn't rely on it in order to provide a
+Haskell typeclasses-like FP approach, doesn't rely on them in order to provide a
 functional programming environment for the developers.
 Instead, they just rely on the most important pillars of functional programming that are 
 __referential transparency__ and __immutability__, usually complemented with the use 
