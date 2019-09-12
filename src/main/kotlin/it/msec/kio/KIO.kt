@@ -118,3 +118,9 @@ inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.mapT3(crossinline f: (T2<A, B>) -
     }
 }
 
+inline fun <R, E, A, L, B> KIO<R, E, A>.bimap(crossinline f: (E) -> L, crossinline g: (A) ->B): KIO<R, L, B> = evalMap {
+    when (it) {
+        is Success -> Success(g(it.value))
+        is Failure -> Failure(f(it.error))
+    }
+}
