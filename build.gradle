@@ -7,6 +7,7 @@ buildscript {
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.50'
     id "com.jfrog.bintray" version "1.7"
+    id "com.jfrog.artifactory" version "4.5.4"
 }
 
 apply plugin: 'maven'
@@ -63,4 +64,24 @@ bintray {
             released  = new Date()
         }
     }
+}
+
+artifactory {
+    contextUrl = 'http://oss.jfrog.org'
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = System.getenv('BINTRAY_USER')
+            password = System.getenv('BINTRAY_KEY')
+        }
+        defaults {
+            publications('mavenPublication')
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+    resolve {
+        repoKey = 'jcenter'
+    }
+    clientConfig.info.setBuildNumber(System.getenv('TRAVIS_BUILD_NUMBER'))
 }
