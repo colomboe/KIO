@@ -13,5 +13,5 @@ fun <R, E, A> List<KIO<R, E, A>>.sequence(): KIO<R, E, List<A>> = evalAccessEnv 
     if (results.all { it is Success<A> }) {
         justEnv(results.map { (it as Success<A>).value })
     } else
-        failureEnv(results.filter { it is Failure<E> }.map { (it as Failure<E>).error }.first())
+        failureEnv(results.filterIsInstance<Failure<E>>().map { it.error }.first())
 }
