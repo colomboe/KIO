@@ -2,11 +2,11 @@ package it.msec.kio.kio
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import it.msec.kio.Ref
 import it.msec.kio.flatMap
 import it.msec.kio.map
+import it.msec.kio.ref.Ref
 import it.msec.kio.result.get
-import it.msec.kio.unsafeRunSync
+import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
 class RefTest {

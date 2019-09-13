@@ -6,7 +6,7 @@ import it.msec.kio.internals.KIOInternals.evalAccessR
 import it.msec.kio.justEnv
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
-import it.msec.kio.unsafeRunSuspended
+import it.msec.kio.runtime.unsafeRunSuspended
 
 fun <R, E, A> List<KIO<R, E, A>>.sequence(): KIO<R, E, List<A>> = evalAccessR { env ->
     val results = map { it.unsafeRunSuspended(env) }

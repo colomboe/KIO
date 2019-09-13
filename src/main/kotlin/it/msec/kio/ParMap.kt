@@ -3,6 +3,7 @@ package it.msec.kio
 import it.msec.kio.internals.KIOInternals.laterEnv
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
+import it.msec.kio.runtime.unsafeRunSuspended
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")

@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import it.msec.kio.*
 import it.msec.kio.result.Success
+import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
 class KIOTest {

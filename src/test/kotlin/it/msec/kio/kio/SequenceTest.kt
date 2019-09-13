@@ -4,9 +4,13 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import it.msec.kio.*
+import it.msec.kio.EnvTask
+import it.msec.kio.failure
+import it.msec.kio.just
+import it.msec.kio.justEnv
 import it.msec.kio.result.Failure
 import it.msec.kio.result.get
+import it.msec.kio.runtime.unsafeRunSync
 import it.msec.kio.utils.list.sequence
 import org.junit.Test
 

@@ -1,5 +1,7 @@
-package it.msec.kio
+package it.msec.kio.runtime
 
+import it.msec.kio.BIO
+import it.msec.kio.KIO
 import it.msec.kio.internals.KIOInternals.execute
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext

@@ -4,7 +4,7 @@ import it.msec.kio.EnvTask
 import it.msec.kio.askEnv
 import it.msec.kio.flatMap
 import it.msec.kio.result.get
-import it.msec.kio.unsafeRunSync
+import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
 interface Dep1 {

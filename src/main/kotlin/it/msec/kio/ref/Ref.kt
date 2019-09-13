@@ -1,5 +1,7 @@
-package it.msec.kio
+package it.msec.kio.ref
 
+import it.msec.kio.Task
+import it.msec.kio.task
 import java.util.concurrent.atomic.AtomicReference
 
 data class Ref<A> private constructor(private val value: AtomicReference<A>) {
