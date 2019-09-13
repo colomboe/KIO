@@ -14,7 +14,7 @@ class KIOTest {
 
         val x = just(33)
                 .flatMap { v -> task { v + 2 } }
-                .mapT2 { v -> v * 2 }
+                .mapT { v -> v * 2 }
                 .flatMap { (a, b) -> task { a + b }.flatMap { task { it * 2 } } }
                 .flatMap { unsafe { throw RuntimeException("bye bye") } }
                 .mapError { it.message }
@@ -35,7 +35,7 @@ class KIOTest {
         val x =
                 justEnv<MyEnv, Int>(33)
                 .map { it * 2 }
-                .flatMapT2 { i -> askEnv { env: MyEnv -> env.config } }
+                .flatMapT { i -> askEnv { env: MyEnv -> env.config } }
                 .flatMap { (i , s) -> unsafe { println(i.toString() + s) } }
                 .map { "Done" }
 

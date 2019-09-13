@@ -1,5 +1,6 @@
 package it.msec.kio
 
+import it.msec.kio.core.T
 import it.msec.kio.core.T2
 import it.msec.kio.core.T3
 import it.msec.kio.internals.KIOInternals.eager
@@ -85,37 +86,41 @@ inline fun <R, E, A> KIO<R, E, A>.tryRecover(crossinline f: suspend (E) -> KIO<R
 fun <R, E, A, C> KIO<R, E, A>.fold(e: (E) -> C, f: (A) -> C): EnvTask<R, C> =
     map(f).recover(e)
 
-inline fun <R, E, A, B> KIO<R, E, A>.flatMapT2(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, T2<A, B>> = evalFlatMap {
+inline fun <R, E, A, L, B> KIO<R, E, A>.bimap(crossinline f: (E) -> L, crossinline g: (A) ->B): KIO<R, L, B> = evalMap {
     when (it) {
-        is Success -> f(it.value).map { v -> T2(it.value, v) }
-        is Failure -> eager(it)
+        is Success -> Success(g(it.value))
+        is Failure -> Failure(f(it.error))
     }
 }
 
-inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.flatMapT3(crossinline f: (T2<A, B>) -> KIO<R, E, C>): KIO<R, E, T3<A, B, C>> = evalFlatMap {
-    when (it) {
-        is Success -> f(it.value).map { v -> T3(it.value._1, it.value._2, v) }
-        is Failure -> eager(it)
-    }
-}
-
-inline fun <R, E, A, B> KIO<R, E, A>.mapT2(crossinline f: (A) -> B): KIO<R, E, T2<A, B>> = evalMap {
+@JvmName("mapT2")
+inline fun <R, E, A, B> KIO<R, E, A>.mapT(crossinline f: (A) -> B): KIO<R, E, T2<A, B>> = evalMap {
     when (it) {
         is Success -> Success(T2(it.value, f(it.value)))
         is Failure -> it
     }
 }
 
-inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.mapT3(crossinline f: (T2<A, B>) -> C): KIO<R, E, T3<A, B, C>> = evalMap {
+@JvmName("flatMapT2")
+inline fun <R, E, A, B> KIO<R, E, A>.flatMapT(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, T2<A, B>> = evalFlatMap {
     when (it) {
-        is Success -> Success(T3(it.value._1, it.value._2, f(it.value)))
+        is Success -> f(it.value).map { v -> T(it.value, v) }
+        is Failure -> eager(it)
+    }
+}
+
+@JvmName("mapT3")
+inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.mapT(crossinline f: (T2<A, B>) -> C): KIO<R, E, T3<A, B, C>> = evalMap {
+    when (it) {
+        is Success -> Success(T(it.value._1, it.value._2, f(it.value)))
         is Failure -> it
     }
 }
 
-inline fun <R, E, A, L, B> KIO<R, E, A>.bimap(crossinline f: (E) -> L, crossinline g: (A) ->B): KIO<R, L, B> = evalMap {
+@JvmName("flatMapT3")
+inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.flatMapT(crossinline f: (T2<A, B>) -> KIO<R, E, C>): KIO<R, E, T3<A, B, C>> = evalFlatMap {
     when (it) {
-        is Success -> Success(g(it.value))
-        is Failure -> Failure(f(it.error))
+        is Success -> f(it.value).map { v -> T(it.value._1, it.value._2, v) }
+        is Failure -> eager(it)
     }
 }
