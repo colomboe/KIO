@@ -1,6 +1,8 @@
-package it.msec.kio
+package it.msec.kio.ng
 
-import it.msec.kio.eval.EvalFn.execute
+import it.msec.kio.BIO
+import it.msec.kio.KIO
+import it.msec.kio.NgFn.execute
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext

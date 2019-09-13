@@ -5,8 +5,7 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import it.msec.kio.*
-import it.msec.kio.result.Failure
-import it.msec.kio.result.get
+import it.msec.kio.ng.unsafeRunSync
 import it.msec.kio.utils.list.sequence
 import org.junit.Test
 
@@ -25,7 +24,7 @@ class SequenceTest {
         val kio = xs.sequence()
         val result = kio.unsafeRunSync()
         assertThat(result)
-                .isInstanceOf(Failure::class)
+                .isInstanceOf(Ko::class)
                 .transform { it.error }
                 .isEqualTo("error")
     }

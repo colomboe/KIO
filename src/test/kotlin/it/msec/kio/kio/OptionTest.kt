@@ -1,6 +1,10 @@
 package it.msec.kio.kio
 
-import it.msec.kio.*
+import it.msec.kio.Option
+import it.msec.kio.empty
+import it.msec.kio.flatMap
+import it.msec.kio.just
+import it.msec.kio.ng.unsafeRunSync
 import org.junit.Test
 
 class OptionTest {

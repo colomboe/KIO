@@ -3,8 +3,8 @@ package it.msec.kio.kio
 import it.msec.kio.EnvTask
 import it.msec.kio.askEnv
 import it.msec.kio.flatMap
-import it.msec.kio.result.get
-import it.msec.kio.unsafeRunSync
+import it.msec.kio.get
+import it.msec.kio.ng.unsafeRunSync
 import org.junit.Test
 
 interface Dep1 {

@@ -3,7 +3,7 @@ package it.msec.kio.kio
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import it.msec.kio.*
-import it.msec.kio.result.Success
+import it.msec.kio.ng.unsafeRunSync
 import org.junit.Test
 
 class KIOTest {
@@ -23,7 +23,7 @@ class KIOTest {
                 .recover { "abc" }
                 .unsafeRunSync()
 
-        assertThat(x).isEqualTo(Success("abc"))
+        assertThat(x).isEqualTo(Ok("abc"))
     }
 
     @Test
