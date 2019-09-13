@@ -1,8 +1,10 @@
 package it.msec.kio
 
-sealed class OptionalEmpty
-object Empty : OptionalEmpty()
+object Empty
+typealias Option<A> = BIO<Empty, A>
 
-typealias Option<A> = BIO<OptionalEmpty, A>
+fun <A> empty(): Option<A> = failure(Empty)
 
-fun empty() = failure(Empty)
+fun <A> Option<A>.filter(f: (A) -> Boolean): Option<A> =
+        flatMap { a -> if (f(a)) just(a) else failure(Empty) }
+

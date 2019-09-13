@@ -28,6 +28,8 @@ fun <R, A> justEnv(v: A): EnvTask<R, A> = eager(Success(v))
 
 fun <E> failure(e: E): BIO<E, Nothing> = eager(Failure(e))
 
+fun <R, E> failureEnv(e: E): KIO<R, E, Nothing> = eager(Failure(e))
+
 inline fun <A> unsafe(crossinline f: suspend () -> A): KIO<Any, Throwable, A> = unsafeEnv(f)
 
 inline fun <R, A> unsafeEnv(crossinline f: suspend () -> A): KIO<R, Throwable, A> = lazy {
