@@ -1,9 +1,8 @@
-package it.msec.kio.ng
+package it.msec.kio
 
-import it.msec.kio.KIO
-import it.msec.kio.Ko
-import it.msec.kio.NgFn.laterEnv
-import it.msec.kio.Ok
+import it.msec.kio.internals.KIOInternals.laterEnv
+import it.msec.kio.result.Failure
+import it.msec.kio.result.Success
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")
@@ -13,10 +12,10 @@ fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, f: (A1, A2) -> 
                     .map { async { it.unsafeRunSuspended(env) } }
                     .map { it.await() }
 
-            if (results.all { it is Ok })
-                Ok(f(results[0] as A1, results[1] as A2))
+            if (results.all { it is Success })
+                Success(f(results[0] as A1, results[1] as A2))
             else
-                Ko(results.filterIsInstance<Ko<E>>().map { it.error })
+                Failure(results.filterIsInstance<Failure<E>>().map { it.error })
         }
 
 @Suppress("UNCHECKED_CAST")
@@ -27,8 +26,8 @@ fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E
                     .map { async { it.unsafeRunSuspended(env) } }
                     .map { it.await() }
 
-            if (results.all { it is Ok })
-                Ok(f(results[0] as A1, results[1] as A2, results[2] as A3))
+            if (results.all { it is Success })
+                Success(f(results[0] as A1, results[1] as A2, results[2] as A3))
             else
-                Ko(results.filterIsInstance<Ko<E>>().map { it.error })
+                Failure(results.filterIsInstance<Failure<E>>().map { it.error })
         }
