@@ -9,5 +9,7 @@ data class EnvAccess<R, E, A>(val accessF: suspend (R) -> KIO<R, E, A>): KIO<R, 
 data class FlatMap<R, E, B, L, A>(val flatMapF: suspend (Result<E, A>) -> KIO<R, L, B>, val prev: KIO<R, E, A>): KIO<R, L, B>()
 
 typealias BIO<E, A> = KIO<Any, E, A>
-typealias EnvTask<R, A> = KIO<R, Nothing, A>
-typealias Task<A> = EnvTask<Any, A>
+typealias TaskR<R, A> = KIO<R, Nothing, A>
+typealias Task<A> = TaskR<Any, A>
+typealias Try<A> = BIO<Throwable, A>
+typealias Option<A> = BIO<Empty, A>

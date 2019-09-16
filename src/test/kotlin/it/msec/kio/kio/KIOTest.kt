@@ -33,9 +33,9 @@ class KIOTest {
         data class MyEnv(val config: String = "MyLittleConfig")
 
         val x =
-                justEnv<MyEnv, Int>(33)
+                justR<MyEnv, Int>(33)
                 .map { it * 2 }
-                .flatMapT { i -> askEnv { env: MyEnv -> env.config } }
+                .flatMapT { i -> askR { env: MyEnv -> env.config } }
                 .flatMap { (i , s) -> unsafe { println(i.toString() + s) } }
                 .map { "Done" }
 

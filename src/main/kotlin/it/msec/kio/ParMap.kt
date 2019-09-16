@@ -7,20 +7,20 @@ import it.msec.kio.runtime.unsafeRunSuspended
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")
-fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, f: (A1, A2) -> B): KIO<R, List<E>, B> =
+inline fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, List<E>, B> =
         laterEnv { env ->
             val results = listOf(a, b)
                     .map { async { it.unsafeRunSuspended(env) } }
                     .map { it.await() }
 
             if (results.all { it is Success })
-                Success(f(results[0] as A1, results[1] as A2))
+                Success(f((results[0] as Success<A1>).value, (results[1] as Success<A2>).value))
             else
                 Failure(results.filterIsInstance<Failure<E>>().map { it.error })
         }
 
 @Suppress("UNCHECKED_CAST")
-fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
+inline fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
         laterEnv { env ->
 
             val results = listOf(a, b, c)
@@ -28,7 +28,20 @@ fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E
                     .map { it.await() }
 
             if (results.all { it is Success })
-                Success(f(results[0] as A1, results[1] as A2, results[2] as A3))
+                Success(f((results[0] as Success<A1>).value, (results[1] as Success<A2>).value, (results[2] as Success<A3>).value))
+            else
+                Failure(results.filterIsInstance<Failure<E>>().map { it.error })
+        }
+
+inline fun <R, E, A, B> parMapN(vararg xs: KIO<R, E, A>, crossinline f: (List<A>) -> B): KIO<R, List<E>, B> =
+        laterEnv { env ->
+
+            val results = xs
+                    .map { async { it.unsafeRunSuspended(env) } }
+                    .map { it.await() }
+
+            if (results.all { it is Success })
+                Success(f(results.filterIsInstance<Success<A>>().map { it.value }))
             else
                 Failure(results.filterIsInstance<Failure<E>>().map { it.error })
         }

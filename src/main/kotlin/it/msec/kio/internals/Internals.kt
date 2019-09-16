@@ -14,16 +14,16 @@ object KIOInternals {
     fun <R, E, A> lazy(f: suspend CoroutineScope.() -> Result<E, A>) =
             Lazy<R, E, A> { coroutineScope(f) }
 
-    inline fun <R, E, A> evalAccessR(crossinline f: suspend CoroutineScope.(R) -> KIO<R, E, A>) =
+    inline fun <R, E, A> doAccessR(crossinline f: suspend CoroutineScope.(R) -> KIO<R, E, A>) =
             EnvAccess { r: R -> coroutineScope { f(r) } }
 
     inline fun <R, E, A> laterEnv(crossinline f: suspend CoroutineScope.(R) -> Result<E, A>) =
-            evalAccessR<R, E, A> { r -> eager(f(r)) }
+            doAccessR<R, E, A> { r -> eager(f(r)) }
 
-    fun <R, E, L, A, B> KIO<R, E, A>.evalMap(f: (Result<E, A>) -> Result<L, B>): KIO<R, L, B> =
+    fun <R, E, L, A, B> KIO<R, E, A>.doMap(f: (Result<E, A>) -> Result<L, B>): KIO<R, L, B> =
             FlatMap({ Eager<R, L, B>(f(it)) }, this)
 
-    fun <R, E, L, A, B> KIO<R, E, A>.evalFlatMap(f: suspend (Result<E, A>) -> KIO<R, L, B>): KIO<R, L, B> =
+    fun <R, E, L, A, B> KIO<R, E, A>.doFlatMap(f: suspend (Result<E, A>) -> KIO<R, L, B>): KIO<R, L, B> =
             FlatMap(f, this)
 
     private fun explode(e: KIO<*, *, *>): Stack<KIO<*, *, *>> {

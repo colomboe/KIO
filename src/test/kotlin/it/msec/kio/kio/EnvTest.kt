@@ -1,7 +1,7 @@
 package it.msec.kio.kio
 
-import it.msec.kio.EnvTask
-import it.msec.kio.askEnv
+import it.msec.kio.TaskR
+import it.msec.kio.askR
 import it.msec.kio.flatMap
 import it.msec.kio.result.get
 import it.msec.kio.runtime.unsafeRunSync
@@ -32,7 +32,7 @@ class EnvTest {
     @Test
     fun envTest() {
 
-        val x: EnvTask<MyEnv, String> =
+        val x: TaskR<MyEnv, String> =
                 useDep1("bau")
                         .flatMap { x -> useDep2(x) }
 
@@ -42,10 +42,10 @@ class EnvTest {
 
     }
 
-    fun useDep1(name: String): EnvTask<Dep1, Int> =
-            askEnv { env -> env.doDep1(name) }
+    fun useDep1(name: String): TaskR<Dep1, Int> =
+            askR { env -> env.doDep1(name) }
 
-    fun useDep2(a: Int): EnvTask<Dep2, String> =
-            askEnv { env -> env.doDep2(a) }
+    fun useDep2(a: Int): TaskR<Dep2, String> =
+            askR { env -> env.doDep2(a) }
 
 }

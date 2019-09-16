@@ -1,9 +1,8 @@
 package it.msec.kio
 
-import it.msec.kio.core.then
+import it.msec.kio.utils.nullable.then
 
 object Empty
-typealias Option<A> = BIO<Empty, A>
 
 fun <A> empty(): Option<A> = failure(Empty)
 
