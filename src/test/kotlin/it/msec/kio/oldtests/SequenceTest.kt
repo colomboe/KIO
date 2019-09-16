@@ -1,17 +1,17 @@
-package it.msec.kio.kio
+package it.msec.kio.oldtests
 
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import it.msec.kio.TaskR
+import it.msec.kio.common.list.sequence
 import it.msec.kio.failure
 import it.msec.kio.just
 import it.msec.kio.justR
 import it.msec.kio.result.Failure
 import it.msec.kio.result.get
 import it.msec.kio.runtime.unsafeRunSync
-import it.msec.kio.utils.list.sequence
 import org.junit.Test
 
 class SequenceTest {

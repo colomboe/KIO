@@ -1,4 +1,4 @@
-package it.msec.kio.utils.tuple
+package it.msec.kio.common.tuple
 
 data class T2<A, B>(val _1: A, val _2: B)
 data class T3<A, B, C>(val _1: A, val _2: B, val _3: C)

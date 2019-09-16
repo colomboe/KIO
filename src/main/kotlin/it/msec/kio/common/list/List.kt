@@ -1,13 +1,13 @@
-package it.msec.kio.utils.list
+package it.msec.kio.common.list
 
 import it.msec.kio.KIO
+import it.msec.kio.common.functions.identity
 import it.msec.kio.failureR
 import it.msec.kio.internals.KIOInternals.doAccessR
 import it.msec.kio.justR
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 import it.msec.kio.runtime.unsafeRunSuspended
-import it.msec.kio.utils.functions.identity
 
 fun <A, R, E, B> List<A>.traverse(f: (A) -> KIO<R, E, B>): KIO<R, E, List<B>> = doAccessR { env ->
     val results = map { f(it).unsafeRunSuspended(env) }

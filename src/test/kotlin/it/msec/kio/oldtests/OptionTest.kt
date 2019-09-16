@@ -1,4 +1,4 @@
-package it.msec.kio.kio
+package it.msec.kio.oldtests
 
 import it.msec.kio.Option
 import it.msec.kio.empty

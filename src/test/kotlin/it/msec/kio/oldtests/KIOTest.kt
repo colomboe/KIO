@@ -1,4 +1,4 @@
-package it.msec.kio.kio
+package it.msec.kio.oldtests
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo

@@ -3,8 +3,8 @@ package it.msec.kio
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
+import it.msec.kio.common.tuple.T
 import it.msec.kio.runtime.unsafeRunSyncAndGet
-import it.msec.kio.utils.tuple.T
 import kotlinx.coroutines.delay
 import org.junit.Test
 

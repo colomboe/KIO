@@ -1,4 +1,4 @@
-package it.msec.kio.utils.compose
+package it.msec.kio.common.composition
 
 inline infix fun <A, B, C> ((B) -> C).compose(crossinline f: (A) -> B): (A) -> C = { a -> this(f(a)) }
 inline infix fun <A, B, C> ((A) -> B).andThen(crossinline f: (B) -> C): (A) -> C = { a -> f(this(a)) }

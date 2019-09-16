@@ -1,5 +1,8 @@
 package it.msec.kio
 
+import it.msec.kio.common.tuple.T
+import it.msec.kio.common.tuple.T2
+import it.msec.kio.common.tuple.T3
 import it.msec.kio.internals.KIOInternals.doAccessR
 import it.msec.kio.internals.KIOInternals.doFlatMap
 import it.msec.kio.internals.KIOInternals.doMap
@@ -8,9 +11,6 @@ import it.msec.kio.internals.KIOInternals.execute
 import it.msec.kio.internals.KIOInternals.lazy
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
-import it.msec.kio.utils.tuple.T
-import it.msec.kio.utils.tuple.T2
-import it.msec.kio.utils.tuple.T3
 
 fun <A> task(f: suspend () -> A): Task<A> = lazy { Success(f()) }
 

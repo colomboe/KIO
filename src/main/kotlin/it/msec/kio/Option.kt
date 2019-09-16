@@ -1,6 +1,6 @@
 package it.msec.kio
 
-import it.msec.kio.utils.nullable.then
+import it.msec.kio.common.nullable.then
 
 object Empty
 
