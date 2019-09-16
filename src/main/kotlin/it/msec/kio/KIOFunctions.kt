@@ -24,7 +24,13 @@ fun <E> failure(e: E): BIO<E, Nothing> = eager(Failure(e))
 
 fun <R, E> failureEnv(e: E): KIO<R, E, Nothing> = eager(Failure(e))
 
-inline fun <A> unsafe(crossinline f: suspend () -> A): KIO<Any, Throwable, A> = unsafeEnv(f)
+inline fun <A> unsafe(crossinline f: suspend () -> A): KIO<Any, Throwable, A> = lazy {
+    try {
+        Success(f())
+    } catch (t: Throwable) {
+        Failure(t)
+    }
+}
 
 inline fun <R, A> unsafeEnv(crossinline f: suspend () -> A): KIO<R, Throwable, A> = lazy {
     try {
@@ -41,14 +47,14 @@ inline fun <R, E, A, B> KIO<R, E, A>.map(crossinline f: (A) -> B): KIO<R, E, B> 
     }
 }
 
-inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: suspend (A) -> KIO<R, E, B>): KIO<R, E, B> = evalFlatMap {
+inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, B> = evalFlatMap {
     when (it) {
         is Success -> f(it.value)
         is Failure -> eager(it)
     }
 }
 
-inline fun <R, A> askEnv(crossinline f: suspend (R) -> A): KIO<R, Nothing, A> =
+inline fun <R, A> askEnv(crossinline f: (R) -> A): KIO<R, Nothing, A> =
         evalAccessR { justEnv(f(it)) }
 
 inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L, A> = evalMap {
@@ -76,7 +82,7 @@ inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): EnvTask<R, A
     }
 }
 
-inline fun <R, E, A> KIO<R, E, A>.tryRecover(crossinline f: suspend (E) -> KIO<R, E, A>): KIO<R, E, A> = evalFlatMap {
+inline fun <R, E, A> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, E, A>): KIO<R, E, A> = evalFlatMap {
     when (it) {
         is Success -> eager(it)
         is Failure -> f(it.error)
@@ -90,6 +96,13 @@ inline fun <R, E, A, L, B> KIO<R, E, A>.bimap(crossinline f: (E) -> L, crossinli
     when (it) {
         is Success -> Success(g(it.value))
         is Failure -> Failure(f(it.error))
+    }
+}
+
+inline fun <R, E, A> KIO<R, E, A>.filterTo(crossinline e: (A) -> E, crossinline f: (A) -> Boolean): KIO<R, E, A> = evalMap {
+    when (it) {
+        is Success -> if (f(it.value)) it else Failure(e(it.value))
+        is Failure -> it
     }
 }
 
