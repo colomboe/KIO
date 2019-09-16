@@ -16,7 +16,7 @@ class ParMapTest {
     }
 
     @Test
-    fun parMapNTest() {
+    fun `parMapN maps multiple effects in parallel`() {
 
         val e1 = testEffect(500, 10)
         val e2 = testEffect(500, 20)
@@ -35,7 +35,7 @@ class ParMapTest {
     }
 
     @Test
-    fun parMap2Test() {
+    fun `parMap maps 2 effects in parallel`() {
 
         val e1 = testEffect(500, 10)
         val e2 = testEffect(500, "Hello")
@@ -51,7 +51,7 @@ class ParMapTest {
     }
 
     @Test
-    fun parMap3Test() {
+    fun `parMap maps 3 effects in parallel`() {
 
         val e1 = testEffect(500, 10)
         val e2 = testEffect(500, "Hello")
