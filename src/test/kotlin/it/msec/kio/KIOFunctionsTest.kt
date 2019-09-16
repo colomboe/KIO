@@ -169,4 +169,10 @@ class KIOFunctionsTest {
         assertThat(r1).isEqualTo(5)
         assertThat(r2).isEqualTo(8)
     }
+
+    @Test
+    fun `filterTo maps value to error when predicate is false`() {
+        val r: Result<Int, String> = just("Hello").filterTo({ it.length }, { it == "Hello!!!" }).unsafeRunSync()
+        assertThat(r).isInstanceOf(Failure::class).transform { it.error }.isEqualTo(5)
+    }
 }
