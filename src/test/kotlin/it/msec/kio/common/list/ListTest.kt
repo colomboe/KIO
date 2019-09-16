@@ -1,11 +1,10 @@
-package it.msec.kio.oldtests
+package it.msec.kio.common.list
 
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import it.msec.kio.TaskR
-import it.msec.kio.common.list.sequence
 import it.msec.kio.failure
 import it.msec.kio.just
 import it.msec.kio.justR
@@ -14,17 +13,17 @@ import it.msec.kio.result.get
 import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
-class SequenceTest {
+class ListTest {
 
     @Test
-    fun sequenceOk() {
+    fun `sequence when all values are success`() {
         val xs = listOf(just(11), just(12), just(13))
         val kio = xs.sequence()
         assertThat(kio.unsafeRunSync().get()).containsExactly(11, 12, 13)
     }
 
     @Test
-    fun sequenceError() {
+    fun `sequence when one value is a failure`() {
         val xs = listOf(just(11), just(12), failure("error"))
         val kio = xs.sequence()
         val result = kio.unsafeRunSync()
@@ -35,7 +34,7 @@ class SequenceTest {
     }
 
     @Test
-    fun sequenceEnvOk() {
+    fun `sequence with environment injection`() {
         val env = "StringEnv"
         val xs: List<TaskR<String, Int>> = listOf(justR(11), justR(12), justR(13))
         val kio = xs.sequence()
