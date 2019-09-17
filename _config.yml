@@ -6,3 +6,5 @@ relative_links:
 include:
   - README.md
   - LICENSE
+
+theme: jekyll-theme-minimal
