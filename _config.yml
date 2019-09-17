@@ -7,4 +7,4 @@ include:
   - README.md
   - LICENSE
 
-theme: jekyll-theme-minimal
+theme: jekyll-theme-leap-day
