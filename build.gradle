@@ -15,7 +15,7 @@ apply plugin: 'maven-publish'
 
 archivesBaseName = 'kio'
 group 'it.msec'
-version '0.2'
+version '0.3-SNAPSHOT'
 description = 'KIO library'
 
 repositories {
