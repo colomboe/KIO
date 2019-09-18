@@ -4,11 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import assertk.assertions.isInstanceOf
-import it.msec.kio.common.functions.identity
-import it.msec.kio.result.Failure
-import it.msec.kio.result.Result
-import it.msec.kio.result.get
-import it.msec.kio.result.getOrThrow
+import it.msec.kio.result.*
 import it.msec.kio.runtime.unsafeRunSync
 import it.msec.kio.runtime.unsafeRunSyncAndGet
 import org.junit.Test
@@ -144,7 +140,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `try to recover error with a new effect with failure`() {
-        val r: Result<RuntimeException, Nothing> = failure(RuntimeException("Hello")).tryRecover { failure(IllegalArgumentException("33")) }.unsafeRunSync()
+        val r: Result<RuntimeException, String> = failure(RuntimeException("Hello")).tryRecover { failure(IllegalArgumentException("33")) }.unsafeRunSync()
         assertThat { r.getOrThrow() }.isFailure().isInstanceOf(IllegalArgumentException::class)
     }
 
@@ -164,10 +160,10 @@ class KIOFunctionsTest {
 
     @Test
     fun `bimap maps both success and error`() {
-        val r1: Int = just("Hello").bimap(::identity, { it.length }).unsafeRunSyncAndGet()
-        val r2: Int = failure("World!!!").bimap({ it.length }, ::identity).swap().unsafeRunSyncAndGet()
-        assertThat(r1).isEqualTo(5)
-        assertThat(r2).isEqualTo(8)
+        val r1 = just("Hello").bimap({ a: String -> a }) { it.length }.unsafeRunSync()
+        val r2 = failure("World!!!").bimap({ it.length }, { a: String -> a }).unsafeRunSync()
+        assertThat(r1).isInstanceOf(Success::class).transform { it.value }.isEqualTo(5)
+        assertThat(r2).isInstanceOf(Failure::class).transform { it.error }.isEqualTo(8)
     }
 
     @Test

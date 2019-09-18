@@ -26,6 +26,7 @@ class PeekTest {
     }
 
     @Test
+    @Suppress("UNREACHABLE_CODE")
     fun `peek doesn't trigger a side effect when KIO is a failure value`() {
 
         var sideEffectDestination = ""
@@ -52,6 +53,7 @@ class PeekTest {
     }
 
     @Test
+    @Suppress("UNREACHABLE_CODE")
     fun `peekError doesn't trigger a side effect when KIO is a success value`() {
 
         var sideEffectDestination = ""
