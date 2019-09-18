@@ -15,7 +15,7 @@ apply plugin: 'maven-publish'
 
 archivesBaseName = 'kio'
 group 'it.msec'
-version '0.2-SNAPSHOT'
+version '0.2'
 description = 'KIO library'
 
 repositories {
@@ -36,6 +36,24 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+publishing {
+    publications {
+        KIOPublication(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+        }
+    }
+
+    repositories {
+        maven {
+            name = "myLocalRepo"
+            url = uri("file:///tmp/my-mvn-repo")
+        }
+    }
 }
 
 //publishing {
