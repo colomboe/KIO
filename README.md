@@ -30,3 +30,20 @@ KIO provides a IO monad-like implementation specific for Kotlin with the followi
  
  Also some utility methods are available for lists and null-handling.
  
+### Maven configuration
+```xml
+<repositories>
+  <repository>
+    <id>msec.it</id>
+    <url>https://www.msec.it/maven-repository/</url>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>it.msec</groupId>
+    <artifactId>kio</artifactId>
+    <version>0.2</version>
+  </dependency>
+</dependencies>
+```
