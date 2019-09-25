@@ -4,6 +4,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isSuccess
+import it.msec.kio.common.composition.andThen
 import it.msec.kio.result.*
 import it.msec.kio.runtime.unsafeRunSync
 import it.msec.kio.runtime.unsafeRunSyncAndGet
@@ -170,5 +172,16 @@ class KIOFunctionsTest {
     fun `filterTo maps value to error when predicate is false`() {
         val r: Result<Int, String> = just("Hello").filterTo({ it.length }, { it == "Hello!!!" }).unsafeRunSync()
         assertThat(r).isInstanceOf(Failure::class).transform { it.error }.isEqualTo(5)
+    }
+
+    @Test
+    fun `lift a function to the KIO domain`() {
+
+        val add3 = { a: Int -> a + 3 }
+        val justInt: (Int) -> Task<Int> = ::just
+        val add3Lifted: (Task<Int>) -> Task<Int> = add3.lift()
+        val task = justInt.andThen(add3Lifted)
+
+        assertThat { task(12).unsafeRunSync().getOrNull() }.isSuccess().isEqualTo(15)
     }
 }
