@@ -103,4 +103,4 @@ inline fun <R, E, A> KIO<R, E, A>.filterTo(crossinline e: (A) -> E, crossinline 
     }
 }
 
-inline fun <R, E, A, B> ((A) -> B).lift(): (KIO<R, E, A>) -> KIO<R, E, B> = { a -> a.map(this) }
+fun <R, E, A, B> ((A) -> B).lift(): (KIO<R, E, A>) -> KIO<R, E, B> = { a -> a.map(this) }
