@@ -10,22 +10,22 @@ data class Account(val username: String)
 fun unsafeRetrieveAccountFromDB(id: String): Account =
         throw IllegalArgumentException("No account found with id = $id")
 
-fun safeRetrieveAccountFromDB(userId: String): Try<Account> =
+fun safeRetrieveAccountFromDB(userId: String): Task<Account> =
         unsafe { unsafeRetrieveAccountFromDB(userId) }
 
-fun printToConsole(s: String): Try<Unit> =
+fun printToConsole(s: String): Task<Unit> =
         unsafe { println(s) }
 
-fun readFromConsole(s: String): Try<String?> =
+fun readFromConsole(s: String): Task<String?> =
         printToConsole(s).flatMap { unsafe { "text from console" } }
 
-fun retrieveUsername(userId: String): Task<String> =
+fun retrieveUsername(userId: String): UIO<String> =
         safeRetrieveAccountFromDB(userId)
                 .map { it.username }
                 .peekError { e -> printToConsole("Warning: ${e.message}") }
                 .recover { "anonymous" }
 
-fun interactOnConsole(username: String): Try<String> =
+fun interactOnConsole(username: String): Task<String> =
         printToConsole("Welcome $username")
                 .flatMap { readFromConsole("Enter some text:") }
                 .map { it.orEmpty() }

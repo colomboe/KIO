@@ -9,15 +9,15 @@ import it.msec.kio.internals.KIOInternals.lazy
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 
-fun <A> task(f: suspend () -> A): Task<A> = lazy { Success(f()) }
+fun <A> delay(f: suspend () -> A): UIO<A> = lazy { Success(f()) }
 
-fun <R, A> taskR(f: suspend () -> A): TaskR<R, A> = lazy { Success(f()) }
+fun <R, A> delayR(f: suspend () -> A): URIO<R, A> = lazy { Success(f()) }
 
-fun <A> just(v: A): Task<A> = eager(Success(v))
+fun <A> just(v: A): UIO<A> = eager(Success(v))
 
-fun <R, A> justR(v: A): TaskR<R, A> = eager(Success(v))
+fun <R, A> justR(v: A): URIO<R, A> = eager(Success(v))
 
-fun <E> failure(e: E): BIO<E, Nothing> = eager(Failure(e))
+fun <E> failure(e: E): IO<E, Nothing> = eager(Failure(e))
 
 fun <R, E> failureR(e: E): KIO<R, E, Nothing> = eager(Failure(e))
 
@@ -51,7 +51,7 @@ inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, E, B>)
     }
 }
 
-inline fun <R, A> askR(crossinline f: (R) -> A): KIO<R, Nothing, A> =
+inline fun <R, A> ask(crossinline f: (R) -> A): KIO<R, Nothing, A> =
         doAccessR { justR(f(it)) }
 
 inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L, A> = doMap {
@@ -68,14 +68,14 @@ fun <R, E, A> KIO<R, E, A>.swap(): KIO<R, A, E> = doMap {
     }
 }
 
-fun <R, A> TaskR<R, A>.attempt(): KIO<R, Throwable, A> =
+fun <R, A> URIO<R, A>.attempt(): KIO<R, Throwable, A> =
         doAccessR { env -> unsafeR { (this@attempt.execute(env) as Success<A>).value } }
 
 
-inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): TaskR<R, A> = doFlatMap {
+inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): URIO<R, A> = doFlatMap {
     when (it) {
         is Success -> eager(it)
-        is Failure -> taskR<R, A> { f(it.error) }
+        is Failure -> delayR<R, A> { f(it.error) }
     }
 }
 
@@ -86,7 +86,7 @@ inline fun <R, E, A> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, E, A>)
     }
 }
 
-fun <R, E, A, C> KIO<R, E, A>.fold(e: (E) -> C, f: (A) -> C): TaskR<R, C> =
+fun <R, E, A, C> KIO<R, E, A>.fold(e: (E) -> C, f: (A) -> C): URIO<R, C> =
     map(f).recover(e)
 
 inline fun <R, E, A, L, B> KIO<R, E, A>.bimap(crossinline f: (E) -> L, crossinline g: (A) ->B): KIO<R, L, B> = doMap {

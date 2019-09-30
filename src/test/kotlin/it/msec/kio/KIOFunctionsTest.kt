@@ -15,7 +15,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `task factory method`() {
-        val t: Task<String> = task { "Hello" }
+        val t: UIO<String> = delay { "Hello" }
         val s: String = t.unsafeRunSync().get()
         assertThat(s).isEqualTo("Hello")
     }
@@ -23,21 +23,21 @@ class KIOFunctionsTest {
 
     @Test
     fun `taskR factory method`() {
-        val t: TaskR<Int, String> = taskR { "Hello" }
+        val t: URIO<Int, String> = delayR { "Hello" }
         val s: String = t.unsafeRunSync(33).get()
         assertThat(s).isEqualTo("Hello")
     }
 
     @Test
     fun `just factory method`() {
-        val t: Task<String> = just("Hello")
+        val t: UIO<String> = just("Hello")
         val s: String = t.unsafeRunSync().get()
         assertThat(s).isEqualTo("Hello")
     }
 
     @Test
     fun `justR factory method`() {
-        val t: TaskR<Int, String> = justR("Hello")
+        val t: URIO<Int, String> = justR("Hello")
         val s: String = t.unsafeRunSync(33).get()
         assertThat(s).isEqualTo("Hello")
     }
@@ -45,7 +45,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `failure factory method`() {
-        val t: BIO<String, Int> = failure("Hello")
+        val t: IO<String, Int> = failure("Hello")
         val r: Result<String, Int> = t.unsafeRunSync()
         assertThat(r).isInstanceOf(Failure::class).transform { it.error}.isEqualTo("Hello")
     }
@@ -59,14 +59,14 @@ class KIOFunctionsTest {
 
     @Test
     fun `unsafe factory method with success`() {
-        val t: Try<String>  = unsafe { "Hello" }
+        val t: Task<String>  = unsafe { "Hello" }
         val r: String = t.unsafeRunSync().getOrThrow()
         assertThat(r).isEqualTo("Hello")
     }
 
     @Test
     fun `unsafe factory method with failure`() {
-        val t: Try<String>  = unsafe { throw RuntimeException("Hello") }
+        val t: Task<String>  = unsafe { throw RuntimeException("Hello") }
         val r: Result<Throwable, String> = t.unsafeRunSync()
         assertThat { r.getOrThrow() }.isFailure().isInstanceOf(RuntimeException::class)
     }
@@ -105,7 +105,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `askR provide the injected environment`() {
-        val r: String = askR { env: Int -> env.toString() }.unsafeRunSync(33).get()
+        val r: String = ask { env: Int -> env.toString() }.unsafeRunSync(33).get()
         assertThat(r).isEqualTo("33")
     }
 
@@ -123,7 +123,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `attempt converts Task to BIO`() {
-        val r: Result<Throwable, String> = task { throw RuntimeException("Hello") }.attempt().unsafeRunSync()
+        val r: Result<Throwable, String> = delay { throw RuntimeException("Hello") }.attempt().unsafeRunSync()
         assertThat { r.getOrThrow() }.isFailure().isInstanceOf(RuntimeException::class)
     }
 
@@ -148,14 +148,14 @@ class KIOFunctionsTest {
 
     @Test
     fun `fold provide a task with success`() {
-        val e: BIO<Int, String> = just("Hello")
+        val e: IO<Int, String> = just("Hello")
         val r: String = e.fold({ "Not now" }, { it }).unsafeRunSyncAndGet()
         assertThat(r).isEqualTo("Hello")
     }
 
     @Test
     fun `fold provide a task with failure`() {
-        val e: BIO<String, Int> = failure("Hello")
+        val e: IO<String, Int> = failure("Hello")
         val r: String = e.fold({ it }, { "Not now" }).unsafeRunSyncAndGet()
         assertThat(r).isEqualTo("Hello")
     }
@@ -178,8 +178,8 @@ class KIOFunctionsTest {
     fun `lift a function to the KIO domain`() {
 
         val add3 = { a: Int -> a + 3 }
-        val justInt: (Int) -> Task<Int> = ::just
-        val add3Lifted: (Task<Int>) -> Task<Int> = add3.lift()
+        val justInt: (Int) -> UIO<Int> = ::just
+        val add3Lifted: (UIO<Int>) -> UIO<Int> = add3.lift()
         val task = justInt.andThen(add3Lifted)
 
         assertThat { task(12).unsafeRunSync().getOrNull() }.isSuccess().isEqualTo(15)

@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import it.msec.kio.TaskR
+import it.msec.kio.URIO
 import it.msec.kio.failure
 import it.msec.kio.just
 import it.msec.kio.justR
@@ -36,7 +36,7 @@ class ListTest {
     @Test
     fun `sequence with environment injection`() {
         val env = "StringEnv"
-        val xs: List<TaskR<String, Int>> = listOf(justR(11), justR(12), justR(13))
+        val xs: List<URIO<String, Int>> = listOf(justR(11), justR(12), justR(13))
         val kio = xs.sequence()
         assertThat(kio.unsafeRunSync(env).get()).containsExactly(11, 12, 13)
     }

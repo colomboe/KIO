@@ -44,14 +44,14 @@ class OptionTest {
 
     @Test
     fun `effect to Option when failure`() {
-        val e: BIO<String, Int> = failure("MyError")
+        val e: IO<String, Int> = failure("MyError")
         val o: Int? = e.toOption().unsafeRunSync().getOrNull()
         assertThat(o).isNull()
     }
 
     @Test
     fun `effect to Option when success`() {
-        val e: BIO<String, Int> = just(33)
+        val e: IO<String, Int> = just(33)
         val o: Int? = e.toOption().unsafeRunSync().getOrNull()
         assertThat(o).isEqualTo(33)
     }

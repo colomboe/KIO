@@ -2,8 +2,8 @@ package it.msec.kio.integration
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import it.msec.kio.TaskR
-import it.msec.kio.askR
+import it.msec.kio.URIO
+import it.msec.kio.ask
 import it.msec.kio.flatMap
 import it.msec.kio.result.get
 import it.msec.kio.runtime.unsafeRunSync
@@ -32,10 +32,10 @@ class ModularEnvironmentTest {
         assertThat(r).isEqualTo("Hello 4")
     }
 
-    private fun <R : Dep1> useDep1(name: String): TaskR<R, Int> =
-            askR { env -> env.doDep1(name) }
+    private fun <R : Dep1> useDep1(name: String): URIO<R, Int> =
+            ask { env -> env.doDep1(name) }
 
-    private fun <R : Dep2> useDep2(a: Int): TaskR<R, String> =
-            askR { env -> env.doDep2(a) }
+    private fun <R : Dep2> useDep2(a: Int): URIO<R, String> =
+            ask { env -> env.doDep2(a) }
 
 }
