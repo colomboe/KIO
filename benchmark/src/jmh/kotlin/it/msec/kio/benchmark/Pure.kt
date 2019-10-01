@@ -3,7 +3,7 @@ package it.msec.kio.benchmark
 import it.msec.kio.UIO
 import it.msec.kio.flatMap
 import it.msec.kio.just
-import it.msec.kio.runtime.unsafeRunSyncAndGet
+import it.msec.kio.runtime.v2.RuntimeV2
 import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +18,7 @@ open class Pure {
     var size: Int = 0
 
     @Benchmark
-    fun kioPure(): Int = kioPureLoop(size, 0).unsafeRunSyncAndGet()
+    fun kioPureV2noc(): Int = RuntimeV2.unsafeRunSyncAndGet(kioPureLoop(size, 0))
 
     fun kioPureLoop(size: Int, i: Int): UIO<Int> =
             just(i).flatMap { j ->

@@ -22,8 +22,8 @@ compileJmhKotlin {
 
 jmh {
     include = [
-            'it.msec.kio.benchmark.Pure',
-            'it.msec.kio.benchmark.Map',
+//            'it.msec.kio.benchmark.Pure',
+//            'it.msec.kio.benchmark.Map',
     ]
     resultFormat = 'json'
     resultsFile = file('build/reports/benchmarks.json')

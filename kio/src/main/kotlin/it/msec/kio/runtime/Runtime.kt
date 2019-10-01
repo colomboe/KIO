@@ -19,3 +19,4 @@ fun <R, E, A> KIO<R, E, A>.unsafeRunSync(env: R, ctx: CoroutineContext = EmptyCo
         runBlocking(ctx) { this@unsafeRunSync.execute(env) }
 
 suspend fun <R, E, A> KIO<R, E, A>.unsafeRunSuspended(env: R) = this.execute(env)
+

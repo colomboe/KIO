@@ -53,6 +53,7 @@ object KIOInternals {
                     val returnedEval = (e.flatMapF as suspend (Any?) -> KIO<*, *, *>)(currentValue)
                     stack.addAll(explode(returnedEval))
                 }
+                else -> throw IllegalArgumentException()
             }
         }
         return currentValue as Result<E, A>
