@@ -25,7 +25,7 @@ object RuntimeV2 {
 
 
     @Suppress("UNCHECKED_CAST")
-    private suspend fun <R, E, A> execute(kio: KIO<R, E, A>, r: R): Result<E, A> {
+    suspend fun <R, E, A> execute(kio: KIO<R, E, A>, r: R): Result<E, A> {
 
         val stack = RuntimeStack()
 
