@@ -18,14 +18,11 @@ open class Pure {
     var size: Int = 0
 
     @Benchmark
-    fun kio(): Int =
-            unsafeKIOPureLoop(size, 0)
+    fun kioPure(): Int = kioPureLoop(size, 0).unsafeRunSyncAndGet()
 
     fun kioPureLoop(size: Int, i: Int): UIO<Int> =
             just(i).flatMap { j ->
                 if (j > size) just(j) else kioPureLoop(size, j + 1)
             }
 
-    fun unsafeKIOPureLoop(size: Int, i: Int): Int =
-            kioPureLoop(size, i).unsafeRunSyncAndGet()
 }
