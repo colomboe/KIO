@@ -20,8 +20,8 @@ object RuntimeV2 {
     fun <R, E, A> unsafeRunSync(kio: KIO<R, E, A>, env: R, ctx: CoroutineContext = EmptyCoroutineContext) =
             runBlocking(ctx) { execute(kio, env) }
 
-    suspend fun <R, E, A> KIO<R, E, A>.unsafeRunSuspended(env: R) =
-            execute(this, env)
+    suspend fun <R, E, A> unsafeRunSuspended(kio: KIO<R, E, A>, env: R) =
+            execute(kio, env)
 
 
     @Suppress("UNCHECKED_CAST")

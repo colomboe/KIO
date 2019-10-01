@@ -4,10 +4,10 @@ import it.msec.kio.internals.KIOInternals.doAccessR
 import it.msec.kio.internals.KIOInternals.doFlatMap
 import it.msec.kio.internals.KIOInternals.doMap
 import it.msec.kio.internals.KIOInternals.eager
-import it.msec.kio.internals.KIOInternals.execute
 import it.msec.kio.internals.KIOInternals.lazy
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
+import it.msec.kio.runtime.unsafeRunSuspended
 
 fun <A> delay(f: suspend () -> A): UIO<A> = lazy { Success(f()) }
 
@@ -69,7 +69,7 @@ fun <R, E, A> KIO<R, E, A>.swap(): KIO<R, A, E> = doMap {
 }
 
 fun <R, A> URIO<R, A>.attempt(): KIO<R, Throwable, A> =
-        doAccessR { env -> unsafeR { (this@attempt.execute(env) as Success<A>).value } }
+        doAccessR { env -> unsafeR { (this@attempt.unsafeRunSuspended(env) as Success<A>).value } }
 
 
 inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): URIO<R, A> = doFlatMap {

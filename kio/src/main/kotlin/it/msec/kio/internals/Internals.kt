@@ -2,7 +2,6 @@ package it.msec.kio.internals
 
 import it.msec.kio.*
 import it.msec.kio.result.Result
-import it.msec.kio.runtime.v2.RuntimeV2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 
@@ -25,9 +24,6 @@ object KIOInternals {
 
     fun <R, E, L, A, B> KIO<R, E, A>.doFlatMap(f: suspend (Result<E, A>) -> KIO<R, L, B>): KIO<R, L, B> =
             FlatMap(f, this)
-
-    suspend fun <R, E, A> KIO<R, E, A>.execute(r: R): Result<E, A> =
-            RuntimeV2.execute(this, r)
 
 }
 
