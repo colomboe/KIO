@@ -1,106 +1,37 @@
-//buildscript {
-//    repositories {
-//        jcenter()
-//    }
-//}
-
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.50'
-//    id "com.jfrog.bintray" version "1.7"
-//    id "com.jfrog.artifactory" version "4.5.4"
 }
 
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-
-archivesBaseName = 'kio'
+archivesBaseName = 'kio-project'
 group 'it.msec'
 version '0.3-SNAPSHOT'
 description = 'KIO library'
 
-repositories {
-    mavenCentral()
-}
+allprojects {
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1'
-
-    testCompile "junit:junit:4.12"
-    testCompile 'com.willowtreeapps.assertk:assertk-jvm:0.19'
-    testCompile 'org.jetbrains.kotlin:kotlin-reflect:1.3.50'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-publishing {
-    publications {
-        KIOPublication(MavenPublication) {
-            from components.java
-            groupId = project.group
-            artifactId = project.archivesBaseName
-            version = project.version
-        }
-    }
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'kotlin'
 
     repositories {
-        maven {
-            name = "myLocalRepo"
-            url = uri("file:///tmp/my-mvn-repo")
-        }
+        mavenCentral()
+    }
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
     }
 }
 
-//publishing {
-//    publications {
-//        KIOPublication(MavenPublication) {
-//            from components.java
-//            groupId = project.group
-//            artifactId = project.archivesBaseName
-//            version = project.version
-//        }
-//    }
-//}
-//
-//bintray {
-//    user = System.getenv('BINTRAY_USER')
-//    key = System.getenv('BINTRAY_KEY')
-//    publications = ['KIOPublication']
-//    publish = true
-//    pkg {
-//        repo = 'kio'
-//        name = 'kio'
-//        licenses = ['GPL-3.0']
-//        vcsUrl = 'https://github.com/colomboe/kio.git'
-//        version {
-//            name = project.version
-//            desc = project.description
-//            released  = new Date()
-//        }
-//    }
-//}
-//
-//artifactory {
-//    contextUrl = 'http://oss.jfrog.org'
-//    publish {
-//        repository {
-//            repoKey = 'oss-snapshot-local'
-//            username = System.getenv('BINTRAY_USER')
-//            password = System.getenv('BINTRAY_KEY')
-//        }
-//        defaults {
-//            publications('mavenPublication')
-//            publishArtifacts = true
-//            publishPom = true
-//        }
-//    }
-//    resolve {
-//        repoKey = 'jcenter'
-//    }
-//    clientConfig.info.setBuildNumber(System.getenv('TRAVIS_BUILD_NUMBER'))
-//}
+subprojects {
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1'
+
+        testCompile "junit:junit:4.12"
+        testCompile 'com.willowtreeapps.assertk:assertk-jvm:0.19'
+        testCompile 'org.jetbrains.kotlin:kotlin-reflect:1.3.50'
+    }
+}
+

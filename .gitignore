@@ -18,7 +18,7 @@
 
 ### Gradle ###
 .gradle
-/build/
+**/build/
 /out/
 
 ### NetBeans ###

@@ -1,0 +1,36 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+archivesBaseName = 'kio'
+group 'it.msec'
+version '0.3-SNAPSHOT'
+
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+
+    testCompile "junit:junit"
+    testCompile 'com.willowtreeapps.assertk:assertk-jvm'
+    testCompile 'org.jetbrains.kotlin:kotlin-reflect'
+}
+
+publishing {
+    publications {
+        KIOPublication(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+        }
+    }
+
+    repositories {
+        maven {
+            name = "myLocalRepo"
+            url = uri("file:///tmp/my-mvn-repo")
+        }
+    }
+}

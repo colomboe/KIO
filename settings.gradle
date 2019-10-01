@@ -1,2 +1,4 @@
-rootProject.name = 'kio'
+rootProject.name = 'kio-project'
+include 'kio'
+include 'benchmark'
 
