@@ -25,6 +25,7 @@ class RuntimeStack {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun pop(): RuntimeFn? =
             when {
                 index > 0 -> stack[index--] as RuntimeFn
