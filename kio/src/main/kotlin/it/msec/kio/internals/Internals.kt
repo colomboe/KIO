@@ -2,6 +2,7 @@ package it.msec.kio.internals
 
 import it.msec.kio.*
 import it.msec.kio.result.Result
+import kotlinx.coroutines.CoroutineScope
 
 object KIOInternals {
 
@@ -11,7 +12,7 @@ object KIOInternals {
     fun <R, E, A> lazy(f: () -> Result<E, A>) =
             Lazy<R, E, A>(f)
 
-    fun <R, E, A> lazySuspended(f: suspend () -> Result<E, A>) =
+    fun <R, E, A> lazySuspended(f: suspend CoroutineScope.() -> Result<E, A>) =
             LazySuspended<R, E, A>(f)
 
     fun <R, E, A> doAccessR(f: (R) -> KIO<R, E, A>) =
