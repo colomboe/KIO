@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
 import it.msec.kio.common.tuple.T
-import it.msec.kio.runtime.v2.RuntimeSuspendedV2.unsafeRunSyncAndGet
+import it.msec.kio.runtime.v2.RuntimeSuspended.unsafeRunSyncAndGet
 import kotlinx.coroutines.delay
 import org.junit.Test
 

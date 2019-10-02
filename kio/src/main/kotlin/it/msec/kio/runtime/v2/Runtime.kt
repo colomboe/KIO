@@ -3,19 +3,20 @@ package it.msec.kio.runtime.v2
 import it.msec.kio.*
 import it.msec.kio.result.Result
 import it.msec.kio.result.get
+import it.msec.kio.runtime.KIORuntime
 import it.msec.kio.runtime.RuntimeFn
 import it.msec.kio.runtime.RuntimeStack
 
-object RuntimeV2 {
+object Runtime : KIORuntime {
 
-    fun <A> unsafeRunSyncAndGet(kio: UIO<A>) =
+    override fun <A> unsafeRunSyncAndGet(kio: UIO<A>) =
             execute(kio, Unit).get()
 
-    fun <E, A> unsafeRunSync(kio: IO<E, A>) =
+    override fun <E, A> unsafeRunSync(kio: IO<E, A>) =
             execute(kio, Unit)
 
-    fun <R, E, A> unsafeRunSync(kio: KIO<R, E, A>, env: R) =
-            execute(kio, env)
+    override fun <R, E, A> unsafeRunSync(kio: KIO<R, E, A>, r: R) =
+            execute(kio, r)
 
     @Suppress("UNCHECKED_CAST")
     private fun <R, E, A> execute(kio: KIO<R, E, A>, r: R): Result<E, A> {

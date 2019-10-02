@@ -1,6 +1,6 @@
 package it.msec.kio
 
-import it.msec.kio.runtime.v2.RuntimeSuspendedV2
+import it.msec.kio.runtime.v2.RuntimeSuspended
 import org.junit.Test
 
 class SuspendedTest {
@@ -15,6 +15,6 @@ class SuspendedTest {
                 }
                 .flatMap { i -> unsafeSuspended { println(i) }  }
 
-        println(RuntimeSuspendedV2.unsafeRunSync(kio, 11))
+        println(RuntimeSuspended.unsafeRunSync(kio, 11))
     }
 }

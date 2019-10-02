@@ -2,7 +2,9 @@ package it.msec.kio.benchmark
 
 import it.msec.kio.just
 import it.msec.kio.map
-import it.msec.kio.runtime.v2.RuntimeV2
+import it.msec.kio.runtime.KIORuntime
+import it.msec.kio.runtime.v2.Runtime
+import it.msec.kio.runtime.v2.RuntimeSuspended
 import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 
@@ -14,34 +16,24 @@ import java.util.concurrent.TimeUnit
 open class Map {
 
     @Benchmark
-    fun kioOneV2noc(): Long = kioMapTestV2(12000, 1)
+    fun kioOne(): Long = Runtime.kioMapTest(12000, 1)
 
     @Benchmark
-    fun kioBatch30V2noc(): Long = kioMapTestV2(12000 / 30, 30)
+    fun kioBatch30(): Long = Runtime.kioMapTest(12000 / 30, 30)
 
     @Benchmark
-    fun kioBatch120V2noc(): Long = kioMapTestV2(12000 / 120, 120)
+    fun kioBatch120(): Long = Runtime.kioMapTest(12000 / 120, 120)
 
-//    fun kioMapTest(iterations: Int, batch: Int): Long {
-//        val f = { x: Int -> x + 1 }
-//        var fx = just(0)
-//
-//        var j = 0
-//        while (j < batch) {
-//            fx = fx.map(f)
-//            j += 1
-//        }
-//
-//        var sum = 0L
-//        var i = 0
-//        while (i < iterations) {
-//            sum += fx.unsafeRunSyncAndGet()
-//            i += 1
-//        }
-//        return sum
-//    }
+    @Benchmark
+    fun kioOneSuspended(): Long = RuntimeSuspended.kioMapTest(12000, 1)
 
-    fun kioMapTestV2(iterations: Int, batch: Int): Long {
+    @Benchmark
+    fun kioBatch30Suspended(): Long = RuntimeSuspended.kioMapTest(12000 / 30, 30)
+
+    @Benchmark
+    fun kioBatch120Suspended(): Long = RuntimeSuspended.kioMapTest(12000 / 120, 120)
+
+    private fun KIORuntime.kioMapTest(iterations: Int, batch: Int): Long {
         val f = { x: Int -> x + 1 }
         var fx = just(0)
 
@@ -54,7 +46,7 @@ open class Map {
         var sum = 0L
         var i = 0
         while (i < iterations) {
-            sum += RuntimeV2.unsafeRunSyncAndGet(fx)
+            sum += unsafeRunSyncAndGet(fx)
             i += 1
         }
         return sum

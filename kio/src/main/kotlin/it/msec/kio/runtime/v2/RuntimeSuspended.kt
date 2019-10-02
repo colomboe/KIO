@@ -3,6 +3,7 @@ package it.msec.kio.runtime.v2
 import it.msec.kio.*
 import it.msec.kio.result.Result
 import it.msec.kio.result.get
+import it.msec.kio.runtime.KIORuntime
 import it.msec.kio.runtime.RuntimeFn
 import it.msec.kio.runtime.RuntimeStack
 import kotlinx.coroutines.CoroutineScope
@@ -10,7 +11,13 @@ import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-object RuntimeSuspendedV2 {
+object RuntimeSuspended : KIORuntime {
+
+    override fun <A> unsafeRunSyncAndGet(kio: UIO<A>): A = runBlocking { execute(kio, Unit) }.get()
+
+    override fun <E, A> unsafeRunSync(kio: IO<E, A>): Result<E, A> = runBlocking { execute(kio, Unit) }
+
+    override fun <R, E, A> unsafeRunSync(kio: KIO<R, E, A>, r: R): Result<E, A> = runBlocking { execute(kio, r) }
 
     fun <A> unsafeRunSyncAndGet(kio: UIO<A>, ctx: CoroutineContext = EmptyCoroutineContext) =
             runBlocking(ctx) { execute(kio, Unit) }.get()
@@ -23,7 +30,6 @@ object RuntimeSuspendedV2 {
 
     suspend fun <R, E, A> CoroutineScope.unsafeRunSuspended(kio: KIO<R, E, A>, env: R) =
             execute(kio, env)
-
 
     @Suppress("UNCHECKED_CAST")
     private suspend fun <R, E, A> CoroutineScope.execute(kio: KIO<R, E, A>, r: R): Result<E, A> {
