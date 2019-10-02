@@ -36,7 +36,7 @@ object RuntimeSuspendedV2 {
                 is Eager<*, *, *> -> current.value
                 is Lazy<*, *, *> -> current.valueF()
                 is LazySuspended<*, *, *> -> current.suspendedF(this)
-                is EnvAccess<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
+                is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
                 is FlatMap<*, *, *, *, *> -> {
                     stack.push(current.flatMapF as RuntimeFn)
                     current.prev

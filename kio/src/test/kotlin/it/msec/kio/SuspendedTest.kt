@@ -13,7 +13,7 @@ class SuspendedTest {
                 .flatMap { i ->
                     ask { r: Int -> r + i }
                 }
-                .flatMap { i -> suspended { println(i) }  }
+                .flatMap { i -> unsafeSuspended { println(i) }  }
 
         println(RuntimeSuspendedV2.unsafeRunSync(kio, 11))
     }

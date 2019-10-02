@@ -15,11 +15,8 @@ object KIOInternals {
     fun <R, E, A> lazySuspended(f: suspend CoroutineScope.() -> Result<E, A>) =
             LazySuspended<R, E, A>(f)
 
-    fun <R, E, A> doAccessR(f: (R) -> KIO<R, E, A>) =
-            EnvAccess(f)
-
-//    inline fun <R, E, A> laterEnv(crossinline f: suspend CoroutineScope.(R) -> Result<E, A>) =
-//            doAccessR<R, E, A> { r -> eager(f(r)) }
+    fun <R, E, A> doAskR(f: (R) -> KIO<R, E, A>) =
+            AskR(f)
 
     fun <R, E, L, A, B> KIO<R, E, A>.doMap(f: (Result<E, A>) -> Result<L, B>): KIO<R, L, B> =
             FlatMap({ Eager<R, L, B>(f(it)) }, this)

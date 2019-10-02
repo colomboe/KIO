@@ -27,7 +27,7 @@ object RuntimeV2 {
             current = when (current) {
                 is Eager<*, *, *> -> current.value
                 is Lazy<*, *, *> -> current.valueF()
-                is EnvAccess<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
+                is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
                 is FlatMap<*, *, *, *, *> -> {
                     stack.push(current.flatMapF as RuntimeFn)
                     current.prev
