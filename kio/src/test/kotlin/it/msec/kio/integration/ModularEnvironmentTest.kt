@@ -6,7 +6,7 @@ import it.msec.kio.URIO
 import it.msec.kio.ask
 import it.msec.kio.flatMap
 import it.msec.kio.result.get
-import it.msec.kio.runtime.unsafeRunSync
+import it.msec.kio.unsafeRunSync
 import org.junit.Test
 
 interface Dep1 {

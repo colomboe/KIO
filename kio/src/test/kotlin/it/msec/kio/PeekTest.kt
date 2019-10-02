@@ -6,7 +6,6 @@ import assertk.assertions.isInstanceOf
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 import it.msec.kio.result.getOrThrow
-import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
 class PeekTest {

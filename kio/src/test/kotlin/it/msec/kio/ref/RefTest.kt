@@ -3,7 +3,7 @@ package it.msec.kio.ref
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import it.msec.kio.flatMap
-import it.msec.kio.runtime.unsafeRunSyncAndGet
+import it.msec.kio.unsafeRunSyncAndGet
 import org.junit.Test
 
 class RefTest {

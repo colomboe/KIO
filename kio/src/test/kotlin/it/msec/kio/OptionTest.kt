@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import it.msec.kio.result.getOrNull
-import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
 class OptionTest {

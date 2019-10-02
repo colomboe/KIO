@@ -3,7 +3,6 @@ package it.msec.kio
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import it.msec.kio.result.getOrNull
-import it.msec.kio.runtime.unsafeRunSync
 
 data class Account(val username: String)
 

@@ -4,8 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import it.msec.kio.result.Failure
-import it.msec.kio.runtime.unsafeRunSync
-import it.msec.kio.runtime.unsafeRunSyncAndGet
 import org.junit.Test
 
 class FlatMapTTest {

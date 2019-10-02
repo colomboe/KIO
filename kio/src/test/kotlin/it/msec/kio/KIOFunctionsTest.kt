@@ -7,8 +7,6 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.isSuccess
 import it.msec.kio.common.composition.andThen
 import it.msec.kio.result.*
-import it.msec.kio.runtime.unsafeRunSync
-import it.msec.kio.runtime.unsafeRunSyncAndGet
 import org.junit.Test
 
 class KIOFunctionsTest {
@@ -119,12 +117,6 @@ class KIOFunctionsTest {
     fun `swap changes failure with success`() {
         val r: String = failure("Hello").swap().unsafeRunSync().get()
         assertThat(r).isEqualTo("Hello")
-    }
-
-    @Test
-    fun `attempt converts Task to BIO`() {
-        val r: Result<Throwable, String> = delay { throw RuntimeException("Hello") }.attempt().unsafeRunSync()
-        assertThat { r.getOrThrow() }.isFailure().isInstanceOf(RuntimeException::class)
     }
 
     @Test

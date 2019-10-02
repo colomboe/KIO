@@ -4,13 +4,9 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import it.msec.kio.URIO
-import it.msec.kio.failure
-import it.msec.kio.just
-import it.msec.kio.justR
+import it.msec.kio.*
 import it.msec.kio.result.Failure
 import it.msec.kio.result.get
-import it.msec.kio.runtime.unsafeRunSync
 import org.junit.Test
 
 class ListTest {
@@ -19,7 +15,8 @@ class ListTest {
     fun `sequence when all values are success`() {
         val xs = listOf(just(11), just(12), just(13))
         val kio = xs.sequence()
-        assertThat(kio.unsafeRunSync().get()).containsExactly(11, 12, 13)
+        println(kio.unsafeRunSyncAndGet())
+        assertThat(kio.unsafeRunSyncAndGet()).containsExactly(11, 12, 13)
     }
 
     @Test

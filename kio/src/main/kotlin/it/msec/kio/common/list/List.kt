@@ -2,19 +2,15 @@ package it.msec.kio.common.list
 
 import it.msec.kio.KIO
 import it.msec.kio.common.functions.identity
-import it.msec.kio.failureR
-import it.msec.kio.internals.KIOInternals.doAccessR
+import it.msec.kio.flatMap
 import it.msec.kio.justR
-import it.msec.kio.result.Failure
-import it.msec.kio.result.Success
-import it.msec.kio.runtime.unsafeRunSuspended
+import it.msec.kio.map
 
-fun <A, R, E, B> List<A>.traverse(f: (A) -> KIO<R, E, B>): KIO<R, E, List<B>> = doAccessR { env ->
-    val results = map { f(it).unsafeRunSuspended(env) }
-    if (results.all { it is Success<B> }) {
-        justR(results.map { (it as Success<B>).value })
-    } else
-        failureR(results.filterIsInstance<Failure<E>>().map { it.error }.first())
-}
+inline fun <A, R, E, B> List<A>.traverse(f: (A) -> KIO<R, E, B>): KIO<R, E, List<B>> =
+        foldRight(justR(emptyList())) { a, kio ->
+            f(a).flatMap { b ->
+                kio.map { listOf(b) + it }
+            }
+        }
 
 fun <R, E, A> List<KIO<R, E, A>>.sequence(): KIO<R, E, List<A>> = traverse(::identity)
