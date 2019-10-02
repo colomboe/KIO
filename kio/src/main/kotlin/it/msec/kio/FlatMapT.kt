@@ -4,13 +4,13 @@ import it.msec.kio.common.tuple.T
 import it.msec.kio.common.tuple.T2
 import it.msec.kio.common.tuple.T3
 import it.msec.kio.internals.KIOInternals.doFlatMap
-import it.msec.kio.internals.KIOInternals.doMap
+import it.msec.kio.internals.KIOInternals.doResultMap
 import it.msec.kio.internals.KIOInternals.eager
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 
 @JvmName("mapT2")
-inline fun <R, E, A, B> KIO<R, E, A>.mapT(crossinline f: (A) -> B): KIO<R, E, T2<A, B>> = doMap {
+inline fun <R, E, A, B> KIO<R, E, A>.mapT(crossinline f: (A) -> B): KIO<R, E, T2<A, B>> = doResultMap {
     when (it) {
         is Success -> Success(T(it.value, f(it.value)))
         is Failure -> it
@@ -26,7 +26,7 @@ inline fun <R, E, A, B> KIO<R, E, A>.flatMapT(crossinline f: (A) -> KIO<R, E, B>
 }
 
 @JvmName("mapT3")
-inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.mapT(crossinline f: (T2<A, B>) -> C): KIO<R, E, T3<A, B, C>> = doMap {
+inline fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.mapT(crossinline f: (T2<A, B>) -> C): KIO<R, E, T3<A, B, C>> = doResultMap {
     when (it) {
         is Success -> Success(T(it.value._1, it.value._2, f(it.value)))
         is Failure -> it

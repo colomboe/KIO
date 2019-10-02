@@ -7,7 +7,6 @@ typealias RuntimeFn = (Result<*, *>) -> KIO<*, *, *>
 
 private const val BlockSize = 8
 private const val LastElementIndex = BlockSize - 1
-private const val PopNextIndex = BlockSize - 2
 
 class RuntimeStack {
 
@@ -31,7 +30,7 @@ class RuntimeStack {
                 index > 0 -> stack[index--] as RuntimeFn
                 stack[0] != null -> {
                     stack = stack[0] as Array<Any?>
-                    index = PopNextIndex
+                    index = LastElementIndex
                     stack[LastElementIndex] as RuntimeFn
                 }
                 else -> null

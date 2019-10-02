@@ -1,7 +1,9 @@
 package it.msec.kio.runtime.v2
 
 import it.msec.kio.*
+import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
+import it.msec.kio.result.Success
 import it.msec.kio.result.get
 import it.msec.kio.runtime.KIORuntime
 import it.msec.kio.runtime.RuntimeFn
@@ -29,6 +31,10 @@ object Runtime : KIORuntime {
                 is Eager<*, *, *> -> current.value
                 is Lazy<*, *, *> -> current.valueF()
                 is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
+                is SuccessMap<*, *, *, *> -> {
+                    stack.push(successMapToF(current))
+                    current.prev
+                }
                 is FlatMap<*, *, *, *, *> -> {
                     stack.push(current.flatMapF as RuntimeFn)
                     current.prev
@@ -44,6 +50,14 @@ object Runtime : KIORuntime {
                 else -> throw NeverHereException
             }
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <R, E, A ,B> successMapToF(m: SuccessMap<R, E, A, B>): RuntimeFn = {
+        Eager<R, E, A>(when (it) {
+            is Success<*> -> Success(m.mapF(it.value as B))
+            is Failure<*> -> it as Failure<E>
+        })
     }
 
     object NeverHereException : RuntimeException()

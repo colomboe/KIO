@@ -13,7 +13,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `task factory method`() {
-        val t: UIO<String> = delay { "Hello" }
+        val t: UIO<String> = effect { "Hello" }
         val s: String = t.unsafeRunSync().get()
         assertThat(s).isEqualTo("Hello")
     }
@@ -21,7 +21,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `taskR factory method`() {
-        val t: URIO<Int, String> = delayR { "Hello" }
+        val t: URIO<Int, String> = effectR { "Hello" }
         val s: String = t.unsafeRunSync(33).get()
         assertThat(s).isEqualTo("Hello")
     }
