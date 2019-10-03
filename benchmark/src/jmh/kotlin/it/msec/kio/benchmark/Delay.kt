@@ -1,9 +1,9 @@
 package it.msec.kio.benchmark
 
-import kio.UIO
-import kio.effect
-import kio.flatMap
-import kio.runtime.Runtime
+import it.msec.kio.UIO
+import it.msec.kio.effect
+import it.msec.kio.flatMap
+import it.msec.kio.runtime.Runtime
 import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 

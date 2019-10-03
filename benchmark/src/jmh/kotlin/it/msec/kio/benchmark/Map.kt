@@ -1,10 +1,10 @@
 package it.msec.kio.benchmark
 
-import kio.effect
-import kio.map
-import kio.runtime.KIORuntime
-import kio.runtime.Runtime
-import kio.runtime.RuntimeSuspended
+import it.msec.kio.effect
+import it.msec.kio.map
+import it.msec.kio.runtime.KIORuntime
+import it.msec.kio.runtime.Runtime
+import it.msec.kio.runtime.RuntimeSuspended
 import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 

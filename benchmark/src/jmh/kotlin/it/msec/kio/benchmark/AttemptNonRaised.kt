@@ -1,7 +1,8 @@
 package it.msec.kio.benchmark
 
-import kio.*
-import kio.result.getOrThrow
+import it.msec.kio.*
+import it.msec.kio.result.getOrThrow
+import it.msec.kio.runtime.Runtime.unsafeRunSync
 import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +17,7 @@ open class AttemptNonRaised {
     var size: Int = 0
 
     @Benchmark
-    fun kio(): Int = kio.runtime.Runtime.unsafeRunSync(loopHappy(size, 0)).getOrThrow()
+    fun kio(): Int = unsafeRunSync(loopHappy(size, 0)).getOrThrow()
 
     fun loopHappy(size: Int, i: Int): Task<Int> =
             if (i < size) {
