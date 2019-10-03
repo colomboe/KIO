@@ -1,6 +1,7 @@
 package kio.runtime
 
 import kio.*
+import kio.result.Failure
 import kio.result.Result
 import kio.result.get
 
@@ -16,15 +17,15 @@ object Runtime : KIORuntime {
             execute(kio, r)
 
     @Suppress("UNCHECKED_CAST")
-    private fun <R, E, A> execute(kio: KIO<R, E, A>, r: R): Result<E, A> {
+    private fun <R, E, A> execute(k: KIO<R, E, A>, r: R): Result<E, A> {
 
         val stack = RuntimeStack()
 
-        var current: Any = kio
+        var current: Any = k
         while (true) {
             current = when (current) {
                 is Eager<*, *, *> -> current.value
-                is Lazy<*, *, *> -> current.valueF()
+                is Lazy<*, *, *> -> try { current.valueF() } catch(t: Throwable) { Failure(t) }
                 is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
                 is SuccessMap<*, *, *, *> -> {
                     stack.push(successMapToF(current))
@@ -41,6 +42,7 @@ object Runtime : KIORuntime {
                     else
                         return current as Result<E, A>
                 }
+                is Attempt<*, *> -> current.urio
                 is LazySuspended<*, *, *> -> throw SuspensionNotSupported
                 else -> throw NeverHereException
             }

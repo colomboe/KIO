@@ -117,3 +117,5 @@ inline fun <R, E, A> KIO<R, E, A>.filterTo(crossinline e: (A) -> E, crossinline 
 }
 
 fun <R, E, A, B> ((A) -> B).lift(): (KIO<R, E, A>) -> KIO<R, E, B> = { a -> a.map(this) }
+
+fun <R, A> KIO<R, Nothing, A>.attempt(): KIO<R, Throwable, A> = Attempt(this)

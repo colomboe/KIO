@@ -24,6 +24,8 @@ jmh {
     include = [
             'it.msec.kio.benchmark.Pure',
             'it.msec.kio.benchmark.Map',
+            'it.msec.kio.benchmark.Delay',
+            'it.msec.kio.benchmark.AttemptNonRaised',
     ]
     resultFormat = 'json'
     resultsFile = file('build/reports/benchmarks.json')

@@ -1,6 +1,7 @@
 package kio.runtime
 
 import kio.*
+import kio.result.Failure
 import kio.result.Result
 import kio.result.get
 import kotlinx.coroutines.CoroutineScope
@@ -29,15 +30,15 @@ object RuntimeSuspended : KIORuntime {
             execute(kio, env)
 
     @Suppress("UNCHECKED_CAST")
-    private suspend fun <R, E, A> CoroutineScope.execute(kio: KIO<R, E, A>, r: R): Result<E, A> {
+    private suspend fun <R, E, A> CoroutineScope.execute(k: KIO<R, E, A>, r: R): Result<E, A> {
 
         val stack = RuntimeStack()
 
-        var current: Any = kio
+        var current: Any = k
         while (true) {
             current = when (current) {
                 is Eager<*, *, *> -> current.value
-                is Lazy<*, *, *> -> current.valueF()
+                is Lazy<*, *, *> -> try { current.valueF() } catch(t: Throwable) { Failure(t) }
                 is LazySuspended<*, *, *> -> current.suspendedF(this)
                 is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
                 is SuccessMap<*, *, *, *> -> {
@@ -48,6 +49,7 @@ object RuntimeSuspended : KIORuntime {
                     stack.push(current.flatMapF as RuntimeFn)
                     current.prev
                 }
+                is Attempt<*, *> -> current.urio
                 is Result<*, *> -> {
                     val fn = stack.pop()
                     if (fn != null) fn(current) else return current as Result<E, A>

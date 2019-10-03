@@ -10,6 +10,7 @@ data class LazySuspended<R, E, A>(val suspendedF: suspend CoroutineScope.() -> R
 data class AskR<R, E, A>(val accessF: (R) -> KIO<R, E, A>): KIO<R, E, A>()
 data class FlatMap<R, E, A, L, B>(val flatMapF: (Result<L, B>) -> KIO<R, E, A>, val prev: KIO<R, L, B>): KIO<R, E, A>()
 data class SuccessMap<R, E, A, B>(val mapF: (B) -> A, val prev: KIO<R, E, B>, val index: Int): KIO<R, E, A>()
+data class Attempt<R, A>(val urio: KIO<R, Nothing, A>): KIO<R, Throwable, A>()
 
 typealias IO<E, A> = KIO<Any, E, A>
 typealias URIO<R, A> = KIO<R, Nothing, A>

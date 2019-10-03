@@ -47,7 +47,7 @@ class ParMapTest {
         val stop = System.currentTimeMillis();
 
         assertThat(result).isEqualTo("Hello 10")
-        assertThat(stop - start).isBetween(500, 700)
+        assertThat(stop - start).isBetween(500, 800)
     }
 
     @Test

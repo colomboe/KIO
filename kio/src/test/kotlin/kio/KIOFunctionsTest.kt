@@ -176,4 +176,17 @@ class KIOFunctionsTest {
 
         assertThat { task(12).unsafeRunSync().getOrNull() }.isSuccess().isEqualTo(15)
     }
+
+    @Test
+    fun `attempt handles exceptions even if not requested`() {
+        val io = effect { throw RuntimeException("error") }
+                .map { i: Int -> i + 1 }
+                .attempt()
+
+        val result = kio.runtime.Runtime.unsafeRunSync(io)
+        assertThat(result)
+                .isInstanceOf(Failure::class)
+                .transform { (it.error as RuntimeException).message }
+                .isEqualTo("error")
+    }
 }
