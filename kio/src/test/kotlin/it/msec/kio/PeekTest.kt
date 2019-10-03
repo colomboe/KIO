@@ -72,7 +72,7 @@ class PeekTest {
         var sideEffectDestination = ""
 
         val r = just("Hello")
-                .peek { s -> ask { env: String -> sideEffectDestination = "$s $env!" } }
+                .peek { s -> askPure { env: String -> sideEffectDestination = "$s $env!" } }
                 .unsafeRunSync(environment)
 
         assertThat(r).isInstanceOf(Success::class).transform { it.value }.isEqualTo("Hello")
@@ -86,7 +86,7 @@ class PeekTest {
         var sideEffectDestination = ""
 
         val r = failure("Hello")
-                .peekError { s -> ask { env: String -> sideEffectDestination = "$s $env!" } }
+                .peekError { s -> askPure { env: String -> sideEffectDestination = "$s $env!" } }
                 .unsafeRunSync(environment)
 
         assertThat(r).isInstanceOf(Failure::class).transform { it.error }.isEqualTo("Hello")

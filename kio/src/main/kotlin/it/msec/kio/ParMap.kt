@@ -8,8 +8,8 @@ import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")
 inline fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, List<E>, B> =
-        ask<R>().flatMap { r ->
-            lazySuspended<R, List<E>, B> {
+        ask { r ->
+            lazySuspended {
 
                 val results = listOf(a, b)
                         .map { async { unsafeRunSuspended(it, r) } }
@@ -24,8 +24,8 @@ inline fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinl
 
 @Suppress("UNCHECKED_CAST")
 inline fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
-        ask<R>().flatMap { r ->
-            lazySuspended<R, List<E>, B> {
+        ask { r ->
+            lazySuspended {
 
                 val results = listOf(a, b, c)
                         .map { async { unsafeRunSuspended(it, r) } }
@@ -39,8 +39,8 @@ inline fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: K
         }
 
 inline fun <R, E, A, B> parMapN(vararg xs: KIO<R, E, A>, crossinline f: (List<A>) -> B): KIO<R, List<E>, B> =
-        ask<R>().flatMap { r ->
-            lazySuspended<R, List<E>, B> {
+        ask { r ->
+            lazySuspended {
 
                 val results = xs
                         .map { async { unsafeRunSuspended(it, r) } }

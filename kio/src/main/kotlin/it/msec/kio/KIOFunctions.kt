@@ -58,9 +58,11 @@ inline fun <R, A> unsafeSuspendedR(crossinline f: suspend () -> A): KIO<R, Throw
     }
 }
 
-inline fun <R, A> ask(crossinline f: (R) -> A): URIO<R, A> = doAskR { justR(f(it)) }
+inline fun <R, E, A> ask(crossinline f: (R) -> KIO<R, E, A>): KIO<R, E, A> = doAskR { f(it) }
 
-fun <R> ask(): URIO<R, R> = doAskR(::justR)
+inline fun <R, A> askPure(crossinline f: (R) -> A): URIO<R, A> = doAskR { justR(f(it)) }
+
+fun <R> askPure(): URIO<R, R> = doAskR(::justR)
 
 fun <R, E, A, B> KIO<R, E, A>.map(f: (A) -> B): KIO<R, E, B> = doSuccessMap(f)
 

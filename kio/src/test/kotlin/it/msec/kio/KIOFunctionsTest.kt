@@ -104,7 +104,7 @@ class KIOFunctionsTest {
 
     @Test
     fun `askR provide the injected environment`() {
-        val r: String = ask { env: Int -> env.toString() }.unsafeRunSync(33).get()
+        val r: String = askPure { env: Int -> env.toString() }.unsafeRunSync(33).get()
         assertThat(r).isEqualTo("33")
     }
 

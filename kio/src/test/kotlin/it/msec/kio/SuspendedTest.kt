@@ -11,7 +11,7 @@ class SuspendedTest {
         val kio = just(33)
                 .map { it + 3 }
                 .flatMap { i ->
-                    ask { r: Int -> r + i }
+                    askPure { r: Int -> r + i }
                 }
                 .flatMap { i -> unsafeSuspended { println(i) } }
 
