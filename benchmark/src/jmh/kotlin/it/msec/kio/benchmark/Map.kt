@@ -1,6 +1,6 @@
 package it.msec.kio.benchmark
 
-import kio.just
+import kio.effect
 import kio.map
 import kio.runtime.KIORuntime
 import kio.runtime.Runtime
@@ -35,7 +35,7 @@ open class Map {
 
     private fun KIORuntime.kioMapTest(iterations: Int, batch: Int): Long {
         val f = { x: Int -> x + 1 }
-        var fx = just(0)
+        var fx = effect { 0 }
 
         var j = 0
         while (j < batch) {
