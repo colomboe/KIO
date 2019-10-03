@@ -16,9 +16,9 @@ class FlatMapTest {
                     loop(n - 2).flatMap { b -> effect { a + b } }
                 }
 
-        val io = loop(20)
-        val x = unsafeRunSyncAndGet(io)
-        assertThat(x).isEqualTo(6765)
+        val kio = loop(20)
+        val value = unsafeRunSyncAndGet(kio)
+        assertThat(value).isEqualTo(6765)
     }
 
 }
