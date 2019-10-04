@@ -27,6 +27,8 @@ jmh {
             'it.msec.kio.benchmark.Delay',
             'it.msec.kio.benchmark.AttemptNonRaised',
             'it.msec.kio.benchmark.AttemptRaisedError',
+            'it.msec.kio.benchmark.LeftBind',
+            'it.msec.kio.benchmark.MapStream',
     ]
     resultFormat = 'json'
     resultsFile = file('build/reports/benchmarks.json')
