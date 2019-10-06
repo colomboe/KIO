@@ -39,7 +39,7 @@ object RuntimeSuspended : KIORuntime {
             current = when (current) {
                 is Eager<*, *, *> -> current.value
                 is Lazy<*, *, *> -> try { current.valueF() } catch(t: Throwable) { Failure(t) }
-                is LazySuspended<*, *, *> -> current.suspendedF(this)
+                is LazySuspended<*, *, *> -> try { current.suspendedF(this) } catch(t: Throwable) { Failure(t) }
                 is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
                 is SuccessMap<*, *, *, *> -> {
                     stack.push(successMapToF(current))

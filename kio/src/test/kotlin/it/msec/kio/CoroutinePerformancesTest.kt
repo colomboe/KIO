@@ -19,16 +19,11 @@ class CoroutinePerformancesTest {
         for (i in 1..5) Runtime.unsafeRunSyncAndGet(program)
         for (i in 1..5) unsafeRunSuspended(program, Unit).get()
 
-        val coroutineStart = System.currentTimeMillis()
-        unsafeRunSuspended(program, Unit).get()
-        val coroutineStop = System.currentTimeMillis()
+        val (_, coroutineMillis) = runSuspendedAndGetTimeMillis { unsafeRunSuspended(program, Unit).get() }
+        println(coroutineMillis)
 
-        val noCoroutineStart = System.currentTimeMillis()
-        Runtime.unsafeRunSyncAndGet(program)
-        val noCoroutineStop = System.currentTimeMillis()
-
-        println(noCoroutineStop - noCoroutineStart)
-        println(coroutineStop - coroutineStart)
+        val (_, noCoroutineMillis) = runAndGetTimeMillis { Runtime.unsafeRunSyncAndGet(program) }
+        println(noCoroutineMillis)
     }
 
     @Test
@@ -39,16 +34,11 @@ class CoroutinePerformancesTest {
         for (i in 1..5) Runtime.unsafeRunSyncAndGet(program)
         for (i in 1..5) RuntimeSuspended.unsafeRunSyncAndGet(program)
 
-        val coroutineStart = System.currentTimeMillis()
-        RuntimeSuspended.unsafeRunSyncAndGet(program)
-        val coroutineStop = System.currentTimeMillis()
+        val (_, coroutineMillis) = runAndGetTimeMillis { RuntimeSuspended.unsafeRunSyncAndGet(program) }
+        println(coroutineMillis)
 
-        val noCoroutineStart = System.currentTimeMillis()
-        Runtime.unsafeRunSyncAndGet(program)
-        val noCoroutineStop = System.currentTimeMillis()
-
-        println(noCoroutineStop - noCoroutineStart)
-        println(coroutineStop - coroutineStart)
+        val (_, noCoroutineMillis) = runAndGetTimeMillis { Runtime.unsafeRunSyncAndGet(program) }
+        println(noCoroutineMillis)
     }
 
 

@@ -26,12 +26,10 @@ class ParMapTest {
             rs.reduce { a, b -> a + b }
         }.recover { 0 }
 
-        val start = System.currentTimeMillis();
-        val result = unsafeRunSyncAndGet(out)
-        val stop = System.currentTimeMillis();
+        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(out) }
 
         assertThat(result).isEqualTo(60)
-        assertThat(stop - start).isBetween(500, 700)
+        assertThat(millis).isBetween(500, 700)
     }
 
     @Test
@@ -40,14 +38,12 @@ class ParMapTest {
         val e1 = testEffect(500, 10)
         val e2 = testEffect(500, "Hello")
 
-        val out = parMap(e1, e2) { a, b -> "$b $a" }.recover { "" }
+        val out = parMapN(e1, e2) { a, b -> "$b $a" }.recover { "" }
 
-        val start = System.currentTimeMillis();
-        val result = unsafeRunSyncAndGet(out)
-        val stop = System.currentTimeMillis();
+        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(out) }
 
         assertThat(result).isEqualTo("Hello 10")
-        assertThat(stop - start).isBetween(500, 800)
+        assertThat(millis).isBetween(500, 800)
     }
 
     @Test
@@ -57,15 +53,13 @@ class ParMapTest {
         val e2 = testEffect(500, "Hello")
         val e3 = testEffect(500, T("be", "box"))
 
-        val out = parMap(e1, e2, e3) { a, b, c ->
+        val out = parMapN(e1, e2, e3) { a, b, c ->
             "$b $a (${c._1} ${c._2})"
         }.recover { "" }
 
-        val start = System.currentTimeMillis();
-        val result = unsafeRunSyncAndGet(out)
-        val stop = System.currentTimeMillis();
+        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(out) }
 
         assertThat(result).isEqualTo("Hello 10 (be box)")
-        assertThat(stop - start).isBetween(500, 700)
+        assertThat(millis).isBetween(500, 700)
     }
 }

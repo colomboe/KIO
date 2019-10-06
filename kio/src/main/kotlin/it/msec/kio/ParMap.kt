@@ -7,7 +7,7 @@ import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
 import kotlinx.coroutines.async
 
 @Suppress("UNCHECKED_CAST")
-inline fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, List<E>, B> =
+inline fun <R, E, A1, A2, B> parMapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, List<E>, B> =
         ask { r ->
             lazySuspended {
 
@@ -23,7 +23,7 @@ inline fun <R, E, A1, A2, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinl
         }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <R, E, A1, A2, A3, B> parMap(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
+inline fun <R, E, A1, A2, A3, B> parMapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
         ask { r ->
             lazySuspended {
 
