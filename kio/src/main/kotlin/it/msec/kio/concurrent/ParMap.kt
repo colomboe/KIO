@@ -1,5 +1,7 @@
-package it.msec.kio
+package it.msec.kio.concurrent
 
+import it.msec.kio.KIO
+import it.msec.kio.ask
 import it.msec.kio.internals.KIOInternals.lazySuspended
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success

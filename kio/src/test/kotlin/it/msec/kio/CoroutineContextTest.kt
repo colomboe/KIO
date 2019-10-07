@@ -3,6 +3,7 @@ package it.msec.kio
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
+import it.msec.kio.concurrent.parMapN
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSyncAndGet
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.junit.Test

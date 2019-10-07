@@ -1,10 +1,12 @@
-package it.msec.kio
+package it.msec.kio.concurrent
 
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
 import it.msec.kio.result.get
+import it.msec.kio.runAndGetTimeMillis
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSync
+import it.msec.kio.suspended
 import kotlinx.coroutines.delay
 import org.junit.Test
 

@@ -1,17 +1,16 @@
-package it.msec.kio
+package it.msec.kio.concurrent
 
-import it.msec.kio.Race2Result.First
-import it.msec.kio.Race2Result.Second
+import it.msec.kio.*
+import it.msec.kio.common.coroutines.joinFirst
+import it.msec.kio.concurrent.Race2Result.First
+import it.msec.kio.concurrent.Race2Result.Second
 import it.msec.kio.internals.KIOInternals.eager
 import it.msec.kio.internals.KIOInternals.lazySuspended
 import it.msec.kio.result.Result
 import it.msec.kio.result.Success
 import it.msec.kio.runtime.RuntimeSuspended.NeverHereException
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.selects.select
 
 sealed class Race2Result<R1, R2> {
     data class First<R1>(val winner: R1): Race2Result<R1, Nothing>()
@@ -30,7 +29,6 @@ fun <R, A1, A2, C> URIO<R, Race2Result<URIO<R, A1>, URIO<R, A2>>>.foldRace(f1: (
                     { k -> k.map(f2) })
         }
 
-@ExperimentalCoroutinesApi
 @Suppress("UNCHECKED_CAST")
 fun <R, E, A1, A2> race(a1: KIO<R, E, A1>, a2: KIO<R, E, A2>): URIO<R, Race2Result<URIO<R, A1>, URIO<R, A2>>> =
         ask { r: R ->
@@ -40,7 +38,7 @@ fun <R, E, A1, A2> race(a1: KIO<R, E, A1>, a2: KIO<R, E, A2>): URIO<R, Race2Resu
                 val deferred2 = async { unsafeRunSuspended(a2, r) }
                 val winner = listOf(deferred1, deferred2).joinFirst()
 
-                Success(when(winner) {
+                Success(when (winner) {
                     deferred1 -> First(eager<R, E, A1>(winner.getCompleted() as Result<E, A1>))
                     deferred2 -> Second(eager<R, E, A2>(winner.getCompleted() as Result<E, A2>))
                     else -> throw NeverHereException
@@ -49,11 +47,4 @@ fun <R, E, A1, A2> race(a1: KIO<R, E, A1>, a2: KIO<R, E, A2>): URIO<R, Race2Resu
         }
 
 
-suspend fun <T, E : Deferred<T>> Iterable<E>.joinFirst(): Deferred<T> = select {
-    for (deferred in this@joinFirst) {
-        deferred.onAwait {
-            this@joinFirst.filterNot { it == deferred }.forEach { it.cancel() }
-            deferred
-        }
-    }
-}
+
