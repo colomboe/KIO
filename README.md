@@ -1,6 +1,9 @@
 # KIO [![Actions Status](https://github.com/colomboe/KIO/workflows/CI/badge.svg)](https://github.com/colomboe/KIO/actions)
 A simple, lightweight IO monad implementation for Kotlin inspired to the effect-rotation based ZIO library for Scala.
 
+### Blog posts:
+Introducing KIO: https://www.msec.it/blog/introducing-kio/
+
 ### Introduction
 Many functional programming languages (like Clojure and F#), even if they could (more or less) support the 
 Haskell typeclasses-like FP approach, doesn't rely on it in order to provide a
