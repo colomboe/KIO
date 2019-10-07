@@ -19,7 +19,7 @@ dependencies {
 
 publishing {
     publications {
-        KIOPublication(MavenPublication) {
+        KIO(MavenPublication) {
             from components.java
             groupId = project.group
             artifactId = project.archivesBaseName
@@ -30,7 +30,7 @@ publishing {
     repositories {
         maven {
             name = "myLocalRepo"
-            url = uri("file:///tmp/my-mvn-repo")
+            url = uri("file:///maven-repository")
         }
     }
 }
