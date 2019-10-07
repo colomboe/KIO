@@ -9,6 +9,7 @@ import it.msec.kio.result.Success
 import it.msec.kio.runtime.RuntimeSuspended.NeverHereException
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.selects.select
 
@@ -29,6 +30,8 @@ fun <R, A1, A2, C> URIO<R, Race2Result<URIO<R, A1>, URIO<R, A2>>>.foldRace(f1: (
                     { k -> k.map(f2) })
         }
 
+@ExperimentalCoroutinesApi
+@Suppress("UNCHECKED_CAST")
 fun <R, E, A1, A2> race(a1: KIO<R, E, A1>, a2: KIO<R, E, A2>): URIO<R, Race2Result<URIO<R, A1>, URIO<R, A2>>> =
         ask { r: R ->
             lazySuspended<R, Nothing, Race2Result<URIO<R, A1>, URIO<R, A2>>> {
@@ -49,7 +52,7 @@ fun <R, E, A1, A2> race(a1: KIO<R, E, A1>, a2: KIO<R, E, A2>): URIO<R, Race2Resu
 suspend fun <T, E : Deferred<T>> Iterable<E>.joinFirst(): Deferred<T> = select {
     for (deferred in this@joinFirst) {
         deferred.onAwait {
-            this@joinFirst.forEach { it.cancel() }
+            this@joinFirst.filterNot { it == deferred }.forEach { it.cancel() }
             deferred
         }
     }
