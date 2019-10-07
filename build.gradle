@@ -4,7 +4,7 @@ plugins {
 
 archivesBaseName = 'kio-project'
 group 'it.msec'
-version '0.4-SNAPSHOT'
+version '0.3'
 description = 'KIO library'
 
 allprojects {
