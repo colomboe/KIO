@@ -50,3 +50,6 @@ KIO provides a IO monad-like implementation specific for Kotlin with the followi
   </dependency>
 </dependencies>
 ```
+### Getting started
+
+You can find some documentation in order to start with KIO [here](GettingStarted.md).
