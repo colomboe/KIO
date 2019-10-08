@@ -32,7 +32,7 @@ that basically means:
 
 you can also create your own combination even if there is no a type alias already provided by the library.
 
-###How to create a KIO instance
+### How to create a KIO instance
 
 In order to create a KIO instance, some functions are provided:
  - `just`: returns an instance of KIO that wraps an already computed value; nothing is deferred in this case.
