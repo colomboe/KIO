@@ -1,4 +1,4 @@
-## Getting started with KIO
+# Getting started with KIO
 
 KIO is a side effect wrapper that suspends side effects in order to provide referential transparency even when
 your code need to interact with the outside world. The `KIO` data type has three type parameters:
