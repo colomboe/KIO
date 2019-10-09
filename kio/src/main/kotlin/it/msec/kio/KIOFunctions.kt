@@ -64,6 +64,10 @@ inline fun <R, A> askPure(crossinline f: (R) -> A): URIO<R, A> = doAskR { justR(
 
 fun <R> askPure(): URIO<R, R> = doAskR(::justR)
 
+inline fun <R, E, A> withR(crossinline f: R.() -> KIO<R, E, A>): KIO<R, E, A> = doAskR { f(it) }
+
+inline fun <R, A> withPureR(crossinline f: R.() -> A): URIO<R, A> = doAskR { justR(f(it)) }
+
 fun <R, E, A, B> KIO<R, E, A>.map(f: (A) -> B): KIO<R, E, B> = doSuccessMap(f)
 
 inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
