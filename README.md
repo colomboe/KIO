@@ -1,4 +1,5 @@
-# KIO [![Actions Status](https://github.com/colomboe/KIO/workflows/CI/badge.svg)](https://github.com/colomboe/KIO/actions)
+# KIO [![Actions Status](https://github.com/colomboe/KIO/workflows/CI/badge.svg)](https://github.com/colomboe/KIO/actions) [![Release](https://jitpack.io/v/colomboe/KIO.svg)]
+(https://jitpack.io/#User/Repo)
 A simple, lightweight IO monad implementation for Kotlin inspired to the effect-rotation based ZIO library for Scala.
 
 ### Blog posts:
@@ -37,8 +38,8 @@ KIO provides a IO monad-like implementation specific for Kotlin with the followi
 ```xml
 <repositories>
   <repository>
-    <id>msec.it</id>
-    <url>https://www.msec.it/maven-repository/</url>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
   </repository>
 </repositories>
 
