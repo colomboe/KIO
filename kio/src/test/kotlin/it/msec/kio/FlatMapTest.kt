@@ -21,4 +21,15 @@ class FlatMapTest {
         assertThat(value).isEqualTo(6765)
     }
 
+    @Test
+    fun `flatMap is stack safe`() {
+        val iterations = 100000
+
+        var kio = effect { 33 }
+        for (i in 1..iterations) kio = kio.flatMap { effect { it + 1 } }
+
+        val result = kio.unsafeRunSyncAndGet()
+        assertThat(result).isEqualTo(33 + iterations)
+    }
+
 }
