@@ -17,16 +17,17 @@ object Runtime : KIORuntime {
             execute(kio, r)
 
     @Suppress("UNCHECKED_CAST")
-    private fun <R, E, A> execute(k: KIO<R, E, A>, r: R): Result<E, A> {
+    private fun <R, E, A> execute(k: KIO<R, E, A>, initialR: R): Result<E, A> {
 
         val stack = RuntimeStack()
 
+        var r: Any? = initialR
         var current: Any = k
         while (true) {
             current = when (current) {
                 is Eager<*, *, *> -> current.value
                 is Lazy<*, *, *> -> try { current.valueF() } catch(t: Throwable) { Failure(t) }
-                is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r)
+                is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r as R)
                 is SuccessMap<*, *, *, *> -> {
                     stack.push(successMapToF(current))
                     current.prev
@@ -43,6 +44,16 @@ object Runtime : KIORuntime {
                         return current as Result<E, A>
                 }
                 is Attempt<*, *> -> current.urio
+                is ProvideR<*, *, *> -> {
+                    val prevR = r
+                    stack.push { result -> RestoreR(prevR, result) }
+                    r = current.r
+                    current.prev
+                }
+                is RestoreR<*, *, *> -> {
+                    r = current.r
+                    current.value
+                }
                 is LazySuspended<*, *, *> -> throw SuspensionNotSupported
                 else -> throw NeverHereException
             }
