@@ -56,6 +56,10 @@ If you are going to use the `R` parameter, you can retrieve the injected data us
 to instantly wrap a side effect with the provided data, or the `askPure` function where you optionally can provide
 a mapping function.
 
+### Providing the environment value (SNAPSHOT version)
+
+In any moment you can provide an instance of the `R` parameter with the `provide` method. This will return a KIO instance without R type parameter (`IO`, `UIO`, `Task`, ...). In this way, you can also combine instances of KIO with different `R` types.
+
 ### Concurrency
 
 KIO doesn't provide advanced tools for concurrency management. There are only two functions that you can use for this
