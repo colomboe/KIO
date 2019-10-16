@@ -4,6 +4,7 @@ import it.msec.kio.*
 import it.msec.kio.result.getOrThrow
 import it.msec.kio.runtime.Runtime
 import org.openjdk.jmh.annotations.*
+import org.openjdk.jmh.annotations.Fork
 import java.util.concurrent.TimeUnit
 
 @State(Scope.Thread)

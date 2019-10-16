@@ -3,6 +3,7 @@ package it.msec.kio.runtime
 import it.msec.kio.*
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
+import it.msec.kio.result.Success
 import it.msec.kio.result.get
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
@@ -64,6 +65,13 @@ object RuntimeSuspended : KIORuntime {
                 is RestoreR<*, *, *> -> {
                     r = current.r
                     current.value
+                }
+                is Fork<*, *, *> -> {
+                    val deferred = current.forkF(this)
+                    Success(DeferredResult(deferred))
+                }
+                is Await<*, *, *> -> {
+                    current.fiber.deferred.await()
                 }
                 else -> throw NeverHereException
             }
