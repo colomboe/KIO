@@ -26,11 +26,4 @@ publishing {
             version = project.version
         }
     }
-
-    repositories {
-        maven {
-            name = "myLocalRepo"
-            url = uri("file:///maven-repository")
-        }
-    }
 }
