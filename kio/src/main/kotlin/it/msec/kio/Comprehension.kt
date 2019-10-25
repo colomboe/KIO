@@ -5,6 +5,7 @@ import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlin.reflect.KProperty
 
 fun <R, E, A> binding(f: suspend MagicWorld<R, E>.() -> A): KIO<R, E, A> =
@@ -27,11 +28,15 @@ class MagicWorld<R, E>(private val r: R, private val coroutineScope: CoroutineSc
 
     suspend operator fun <A> KIO<R, E, A>.unaryPlus(): FantoccioDelegate<A> = FantoccioDelegate(this.bind())
 
-    suspend fun <A> KIO<R, E, A>.bind(): A =
-            when (val result = with(coroutineScope) { unsafeRunSuspended(this@bind, r) }) {
-                is Success -> result.value
-                is Failure -> throw HiddenFailureForBindingException(result)
-            }
+    suspend fun <A> KIO<R, E, A>.bind(): A {
+        val result = with(coroutineScope) {
+            async { unsafeRunSuspended(this@bind, r) }.await()
+        }
+        return when (result) {
+            is Success -> result.value
+            is Failure -> throw HiddenFailureForBindingException(result)
+        }
+    }
 
 }
 

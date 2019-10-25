@@ -43,8 +43,22 @@ class ComprehensionTest {
     }
 
     @Test
-    fun `stack safety test`() {
-//        TODO()
+    fun `comprehension is stack safe`() {
+
+        fun recursive(i: Int, max: Int): UIO<Int> = binding {
+            val current = i + 1
+            if (current == max)
+                current
+            else {
+                val u by +recursive(current, max)
+                u
+            }
+        }
+
+        val iterations = 100000
+        val kio = recursive(0, iterations)
+        val result = unsafeRunSyncAndGet(kio)
+        assertThat(result).isEqualTo(iterations)
     }
 }
 
