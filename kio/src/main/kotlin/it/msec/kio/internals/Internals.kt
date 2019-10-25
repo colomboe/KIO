@@ -29,7 +29,7 @@ object KIOInternals {
             if (index < maxStackDepthSize)
                 SuccessMap((this.mapF as (Any?) -> A).andThen(f), this.prev as KIO<R, E, Any?>, this.index + 1)
             else
-                SuccessMap(f, this, 0)
+                SuccessMap(f, this as KIO<R, E, A>, 0)
         }
         is Eager<*, *, *> -> when (this.value) {
             is Success -> Eager(Success(f((this.value as Success<A>).value)))

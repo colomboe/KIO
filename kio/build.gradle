@@ -4,7 +4,7 @@ plugins {
 
 archivesBaseName = 'kio'
 group 'it.msec'
-version '0.4-SNAPSHOT'
+version '0.5-SNAPSHOT'
 
 apply plugin: 'kotlin'
 
@@ -24,13 +24,6 @@ publishing {
             groupId = project.group
             artifactId = project.archivesBaseName
             version = project.version
-        }
-    }
-
-    repositories {
-        maven {
-            name = "myLocalRepo"
-            url = uri("file:///maven-repository")
         }
     }
 }
