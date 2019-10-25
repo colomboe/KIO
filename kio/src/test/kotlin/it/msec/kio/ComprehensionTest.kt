@@ -34,7 +34,7 @@ class ComprehensionTest {
         val kio: IO<TestError, String> = binding {
             val s1 by +just("Hello")
             val s2 by +shouldFail()
-            val s3 by +effect { "$s1 world!" }
+            val s3 by +effect { "$s1 $s2 world!" }
             s3
         }
 

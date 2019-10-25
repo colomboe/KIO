@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlin.reflect.KProperty
 
+@Suppress("UNCHECKED_CAST")
 fun <R, E, A> binding(f: suspend BindingContext<R, E>.() -> A): KIO<R, E, A> =
         ask { r: R ->
             lazySuspended<R, E, A> {
@@ -26,9 +27,9 @@ class BindingDelegate<A>(private val a: A) {
 
 class BindingContext<R, E>(private val r: R, private val coroutineScope: CoroutineScope) {
 
-    private suspend operator fun <A> KIO<R, E, A>.unaryPlus(): BindingDelegate<A> = BindingDelegate(this.bind())
+    suspend operator fun <A> KIO<R, E, A>.unaryPlus(): BindingDelegate<A> = BindingDelegate(this.bind())
 
-    private suspend fun <A> KIO<R, E, A>.bind(): A {
+    suspend fun <A> KIO<R, E, A>.bind(): A {
         val result = with(coroutineScope) {
             async { unsafeRunSuspended(this@bind, r) }.await()
         }
