@@ -8,10 +8,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlin.reflect.KProperty
 
-fun <R, E, A> binding(f: suspend MagicWorld<R, E>.() -> A): KIO<R, E, A> =
+fun <R, E, A> binding(f: suspend BindingContext<R, E>.() -> A): KIO<R, E, A> =
         ask { r: R ->
             lazySuspended<R, E, A> {
-                val world = MagicWorld<R, E>(r, this)
+                val world = BindingContext<R, E>(r, this)
                 try {
                     Success(world.f())
                 } catch (e: HiddenFailureForBindingException) {
@@ -24,11 +24,11 @@ class BindingDelegate<A>(private val a: A) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): A = a
 }
 
-class MagicWorld<R, E>(private val r: R, private val coroutineScope: CoroutineScope) {
+class BindingContext<R, E>(private val r: R, private val coroutineScope: CoroutineScope) {
 
-    suspend operator fun <A> KIO<R, E, A>.unaryPlus(): BindingDelegate<A> = BindingDelegate(this.bind())
+    private suspend operator fun <A> KIO<R, E, A>.unaryPlus(): BindingDelegate<A> = BindingDelegate(this.bind())
 
-    suspend fun <A> KIO<R, E, A>.bind(): A {
+    private suspend fun <A> KIO<R, E, A>.bind(): A {
         val result = with(coroutineScope) {
             async { unsafeRunSuspended(this@bind, r) }.await()
         }
