@@ -20,13 +20,13 @@ fun <R, E, A> binding(f: suspend MagicWorld<R, E>.() -> A): KIO<R, E, A> =
             }
         }
 
-class FantoccioDelegate<A>(private val a: A) {
+class BindingDelegate<A>(private val a: A) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): A = a
 }
 
 class MagicWorld<R, E>(private val r: R, private val coroutineScope: CoroutineScope) {
 
-    suspend operator fun <A> KIO<R, E, A>.unaryPlus(): FantoccioDelegate<A> = FantoccioDelegate(this.bind())
+    suspend operator fun <A> KIO<R, E, A>.unaryPlus(): BindingDelegate<A> = BindingDelegate(this.bind())
 
     suspend fun <A> KIO<R, E, A>.bind(): A {
         val result = with(coroutineScope) {

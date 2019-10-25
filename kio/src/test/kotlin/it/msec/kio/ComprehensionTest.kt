@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import it.msec.kio.result.Failure
+import it.msec.kio.result.Success
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSync
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSyncAndGet
 import org.junit.Test
@@ -28,10 +29,12 @@ class ComprehensionTest {
     @Test
     fun `basic comprehension with error`() {
 
+        fun shouldFail(): IO<TestError, String> = failure(BigError)
+
         val kio: IO<TestError, String> = binding {
             val s1 by +just("Hello")
-            val s2 by +failure(BigError)
-            val s3 by +effect { "$1 world!" }
+            val s2 by +shouldFail()
+            val s3 by +effect { "$s1 world!" }
             s3
         }
 
@@ -40,6 +43,25 @@ class ComprehensionTest {
                 .isInstanceOf(Failure::class)
                 .transform { it.error }
                 .isEqualTo(BigError)
+    }
+
+    @Test
+    fun `comprehension works with environment`() {
+
+        fun retrieveValue(): KIO<String, TestError, Int> = ask { unsafe { it.toInt() }.mapError { BigError } }
+        fun incrementValue(x: Int): UIO<Int> =  effect { x + 1 }
+
+        val kio: KIO<String, TestError, Int> = binding {
+            val start by +retrieveValue()
+            val inc by +incrementValue(start)
+            inc
+        }
+
+        val result = unsafeRunSync(kio, "33")
+        assertThat(result).isInstanceOf(Success::class).transform { it.value }.isEqualTo(34)
+
+        val result2 = unsafeRunSync(kio, "uu")
+        assertThat(result2).isInstanceOf(Failure::class).transform { it.error }.isEqualTo(BigError)
     }
 
     @Test
@@ -62,6 +84,5 @@ class ComprehensionTest {
     }
 }
 
-sealed class TestError()
+sealed class TestError
 object BigError : TestError()
-object LittleError : TestError()
