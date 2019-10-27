@@ -69,19 +69,18 @@ class FiberTest {
             }
         }
 
-        val prog: URIO<Int, Unit> = binding {
-            effect { println("Result:") }.bind()
-            val fiber1 by +first.fork()
-            val fiber2 by +second.fork()
-            val r1 by +fiber1.await()
-            val r2 by +fiber2.await()
-
+        val prog =
+            effect { println("Result:") } +
+            first.fork()    to { fiber1 ->
+            second.fork()   to { fiber2 ->
+            fiber1.await()  to { r1 ->
+            fiber2.await()  to { r2 ->
             effect {
                 println(r1)
                 println(r2)
                 println("done")
-            }.bind()
-        }
+            }
+        }}}}
 
         val result = RuntimeSuspended.unsafeRunSync(prog, 33).get()
         println(result)
