@@ -8,6 +8,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlin.reflect.KProperty
 
+operator fun <R, E, A, B> KIO<R, E, A>.plus(that: KIO<R, E, B>): KIO<R, E, B> = this.flatMap { that }
+inline infix fun <R, E, A, B> KIO<R, E, A>.to(crossinline f: (a: A) -> KIO<R, E, B>): KIO<R, E, B> = this.flatMap(f)
+inline operator fun <R, E, A, B> KIO<R, E, A>.plus(crossinline f: (a: A) -> KIO<R, E, B>): KIO<R, E, B> = this.flatMap(f)
+
+// -- OLD IMPLEMENTATION --
+
 @Suppress("UNCHECKED_CAST")
 fun <R, E, A> binding(f: suspend BindingContext<R, E>.() -> A): KIO<R, E, A> =
         ask { r: R ->
