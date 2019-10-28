@@ -127,3 +127,9 @@ fun <R, E, A, B> ((A) -> B).lift(): (KIO<R, E, A>) -> KIO<R, E, B> = { a -> a.ma
 fun <R, A> KIO<R, Nothing, A>.attempt(): RIO<R, A> = Attempt(this)
 
 fun <R, E, A> KIO<R, E, A>.provide(r: R): IO<E, A> = ProvideR(r, this)
+
+inline fun <R, E, A1, A2, B> mapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, E, B> =
+        a.flatMap { r1 -> b.map { r2 -> f(r1, r2) } }
+
+inline fun <R, E, A1, A2, A3, B> mapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, E, B> =
+        a.flatMap { r1 -> b.flatMap { r2 -> c.map { r3 -> f(r1, r2, r3) } } }
