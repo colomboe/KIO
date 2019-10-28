@@ -14,6 +14,7 @@ inline operator fun <R, E, A, B> KIO<R, E, A>.plus(crossinline f: (a: A) -> KIO<
 
 // -- OLD IMPLEMENTATION --
 
+@Deprecated("This syntax has been deprecated, please use the `+` and `to` syntax.")
 @Suppress("UNCHECKED_CAST")
 fun <R, E, A> binding(f: suspend BindingContext<R, E>.() -> A): KIO<R, E, A> =
         ask { r: R ->
