@@ -78,6 +78,28 @@ class ComprehensionTest {
         val result = unsafeRunSyncAndGet(kio)
         assertThat(result).isEqualTo(iterations)
     }
+
+    @Test
+    fun `mixed pure and effectful functions`() {
+
+        fun doFirst(): UIO<Unit> = KIO.unit()
+        fun doSecond(): UIO<String> = just("second")
+        fun combine(s: String): String = "$s and $s"
+        fun doThird(s: String): UIO<String> = just(s.toUpperCase())
+        fun doFourth(s: String): UIO<String> = just(s.substring(1))
+
+        val prog =
+            doFirst()               +
+            doSecond()              to  { secondValue ->
+            combine(secondValue)    set { combined ->
+            doThird(combined)       to  { thirdValue ->
+            doFourth(thirdValue)
+        }}}
+
+        val result = prog.unsafeRunSyncAndGet()
+        assertThat(result).isEqualTo("ECOND AND SECOND")
+
+    }
 }
 
 sealed class TestError
