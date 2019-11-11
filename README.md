@@ -3,6 +3,7 @@ A simple, lightweight IO monad implementation for Kotlin inspired to the effect-
 
 ### Blog posts:
 Introducing KIO: [https://www.msec.it/blog/introducing-kio/](https://www.msec.it/blog/introducing-kio/)
+Comprehension-like syntax: [https://www.msec.it/blog/comprehension-like-syntax-in-kotlin/](https://www.msec.it/blog/comprehension-like-syntax-in-kotlin/)
 
 ### Introduction
 Many functional programming languages (like Clojure and F#), even if they could (more or less) support the 
