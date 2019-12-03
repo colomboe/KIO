@@ -84,6 +84,13 @@ inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L
     }
 }
 
+inline fun <R, E, A, B> KIO<R, E, A>.followedBy(k: KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
+    when (it) {
+        is Success -> k
+        is Failure -> eager(it)
+    }
+}
+
 fun <R, E, A> KIO<R, E, A>.swap(): KIO<R, A, E> = doResultMap {
     when (it) {
         is Success -> Failure(it.value)

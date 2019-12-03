@@ -103,6 +103,14 @@ class KIOFunctionsTest {
     }
 
     @Test
+    fun `followedBy composition`() {
+        var x = 0
+        val t: Task<Unit> = unsafe { x += 1 }.followedBy(unsafe { x += 2 })
+        val r = t.unsafeRunSync()
+        assertThat(x).isEqualTo(3)
+    }
+
+    @Test
     fun `askR provide the injected environment`() {
         val r: String = askPure { env: Int -> env.toString() }.unsafeRunSync(33).get()
         assertThat(r).isEqualTo("33")
