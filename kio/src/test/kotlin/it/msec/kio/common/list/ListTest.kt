@@ -15,7 +15,6 @@ class ListTest {
     fun `sequence when all values are success`() {
         val xs = listOf(just(11), just(12), just(13))
         val kio = xs.sequence()
-        println(kio.unsafeRunSyncAndGet())
         assertThat(kio.unsafeRunSyncAndGet()).containsExactly(11, 12, 13)
     }
 
@@ -28,6 +27,20 @@ class ListTest {
                 .isInstanceOf(Failure::class)
                 .transform { it.error }
                 .isEqualTo("error")
+    }
+
+    @Test
+    fun `sequence when a middle value is a failure`() {
+        var i = 0
+        val xs = listOf(effect { i++ }, effect { i++ }, failure("error"), effect { i++ })
+        val result = xs.sequence().unsafeRunSync()
+
+        assertThat(result)
+                .isInstanceOf(Failure::class)
+                .transform { it.error }
+                .isEqualTo("error")
+
+        assertThat(i).isEqualTo(2)
     }
 
     @Test
