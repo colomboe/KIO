@@ -105,7 +105,7 @@ inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): URIO<R, A> =
     }
 }
 
-inline fun <R, E, A> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, E, A>): KIO<R, E, A> = doFlatMap {
+inline fun <R, E, A, L> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, L, A>): KIO<R, L, A> = doFlatMap {
     when (it) {
         is Success -> eager(it)
         is Failure -> f(it.error)
