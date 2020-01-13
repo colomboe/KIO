@@ -50,6 +50,34 @@ Some additional notes:
 their behaviour is exactly the same of the non-R versions. The only difference is in how the `R` type in handled
 in order to help the type inference when using the `R` type for injection.
 
+### Comprehension-like syntax
+
+With KIO there are two ways to rewrite nested `map/flatMap`; the first one is throuht the `mapT/flatMapT`, that get the result from the argument function and put it in a tuple with the provided input parameter:
+
+```kotlin
+val io = printIntroductionText()
+    .flatMap { retrieveWorldSizeKm() }
+    .map { worldSizeKm -> convertKmToMiles(worldSizeKm) }
+    .flatMapT { worldSizeMiles -> readInitialPosition(worldSizeMiles) }
+    .flatMapT { (_, _) -> readInitialDirection() }
+    .flatMap { (size, pos, dir) -> initState(size, pos, dir) }
+```
+
+The second way is cleaner and more readable (since KIO 0.5):
+
+```kotlin
+val io = 
+    printIntroductionText()                 +
+    retrieveWorldSizeKm()                   to  { worldSizeKm ->
+    convertKmToMiles(worldSizeKm)           set { worldSizeMiles ->
+    readInitialPosition(worldSizeMiles)     to  { pos ->
+    readInitialDirection()                  to  { dir ->
+    initState(worldSizeMiles, pos, dir)
+}}}}
+```
+
+In this code, the `to` operator is semantically used inject in the context the result of the same-row function call; the same is for the `set` operator, but it works for pure function calls. Lastly, the `+` operator is used to concatenate two effectful functions where the output of the first function call is discarted (or it's `Unit`).
+
 ### Accessing the environment
 
 If you are going to use the `R` parameter, you can retrieve the injected data using the `ask` function if you are going 

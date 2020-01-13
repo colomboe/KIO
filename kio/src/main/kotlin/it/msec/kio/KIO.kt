@@ -6,7 +6,9 @@ import kotlinx.coroutines.Deferred
 
 inline class DeferredResult<E, A>(val deferred: Deferred<Result<E, A>> )
 
-sealed class KIO<in R, out E, out A>
+sealed class KIO<in R, out E, out A> {
+    companion object
+}
 data class Eager<R, E, A>(val value: Result<E, A>): KIO<R, E, A>()
 data class Lazy<R, E, A>(val valueF: () -> Result<E, A>): KIO<R, E, A>()
 data class LazySuspended<R, E, A>(val suspendedF: suspend CoroutineScope.() -> Result<E, A>): KIO<R, E, A>()

@@ -68,9 +68,9 @@ inline fun <R, E, A> withR(crossinline f: R.() -> KIO<R, E, A>): KIO<R, E, A> = 
 
 inline fun <R, A> withPureR(crossinline f: R.() -> A): URIO<R, A> = doAskR { justR(f(it)) }
 
-infix fun <R, E, A, B> KIO<R, E, A>.map(f: (A) -> B): KIO<R, E, B> = doSuccessMap(f)
+inline infix fun <R, E, A, B> KIO<R, E, A>.map(noinline f: (A) -> B): KIO<R, E, B> = doSuccessMap(f)
 
-inline fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
+inline infix fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
     when (it) {
         is Success -> f(it.value)
         is Failure -> eager(it)
@@ -81,6 +81,13 @@ inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L
     when (it) {
         is Success -> it
         is Failure -> Failure(f(it.error))
+    }
+}
+
+inline fun <R, E, A, B> KIO<R, E, A>.followedBy(k: KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
+    when (it) {
+        is Success -> k
+        is Failure -> eager(it)
     }
 }
 
@@ -98,7 +105,7 @@ inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): URIO<R, A> =
     }
 }
 
-inline fun <R, E, A> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, E, A>): KIO<R, E, A> = doFlatMap {
+inline fun <R, E, A, L> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, L, A>): KIO<R, L, A> = doFlatMap {
     when (it) {
         is Success -> eager(it)
         is Failure -> f(it.error)
@@ -127,3 +134,9 @@ fun <R, E, A, B> ((A) -> B).lift(): (KIO<R, E, A>) -> KIO<R, E, B> = { a -> a.ma
 fun <R, A> KIO<R, Nothing, A>.attempt(): RIO<R, A> = Attempt(this)
 
 fun <R, E, A> KIO<R, E, A>.provide(r: R): IO<E, A> = ProvideR(r, this)
+
+inline fun <R, E, A1, A2, B> mapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, E, B> =
+        a.flatMap { r1 -> b.map { r2 -> f(r1, r2) } }
+
+inline fun <R, E, A1, A2, A3, B> mapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, E, B> =
+        a.flatMap { r1 -> b.flatMap { r2 -> c.map { r3 -> f(r1, r2, r3) } } }
