@@ -34,7 +34,7 @@ class ParMapTest {
                 { unsafeRunPromiseAndGet(out) },
                 { result, millis ->
                     assertThat(result).isEqualTo(60)
-                    assertThat(millis).isBetween(500, 700)
+                    assertThat(millis).isBetween(500, 800)
                 }
         )
     }
