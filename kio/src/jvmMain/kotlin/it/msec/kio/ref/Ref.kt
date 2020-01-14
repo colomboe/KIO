@@ -3,10 +3,7 @@ package it.msec.kio.ref
 import it.msec.kio.UIO
 import it.msec.kio.common.tuple.T2
 import it.msec.kio.effect
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicReference
-
-val x = runBlocking {  }
 
 @Suppress("DataClassPrivateConstructor")
 data class Ref<A> private constructor(private val value: AtomicReference<A>) {
@@ -32,7 +29,4 @@ data class Ref<A> private constructor(private val value: AtomicReference<A>) {
     }
 
     fun update(f: (A) -> A): UIO<Unit> = modify { a -> T2(f(a), Unit) }
-
 }
-
-
