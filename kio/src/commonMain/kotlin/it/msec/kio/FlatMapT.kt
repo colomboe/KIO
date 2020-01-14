@@ -8,6 +8,7 @@ import it.msec.kio.internals.KIOInternals.doResultMap
 import it.msec.kio.internals.KIOInternals.eager
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
+import kotlin.jvm.JvmName
 
 @JvmName("mapT2")
 inline infix fun <R, E, A, B> KIO<R, E, A>.mapT(crossinline f: (A) -> B): KIO<R, E, T2<A, B>> = doResultMap {

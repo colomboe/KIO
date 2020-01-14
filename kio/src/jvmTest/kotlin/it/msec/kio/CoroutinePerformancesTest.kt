@@ -1,9 +1,9 @@
 package it.msec.kio
 
 import it.msec.kio.result.get
+import it.msec.kio.runtime.CoroutineInterpreter.unsafeRunSuspended
 import it.msec.kio.runtime.Runtime
 import it.msec.kio.runtime.RuntimeSuspended
-import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

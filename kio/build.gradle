@@ -1,29 +1,116 @@
+//plugins {
+//    id 'org.jetbrains.kotlin.jvm'
+//}
+
+//apply plugin: 'kotlin'
+//
+//dependencies {
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+//
+//    testCompile "junit:junit"
+//    testCompile 'com.willowtreeapps.assertk:assertk-jvm'
+//    testCompile 'org.jetbrains.kotlin:kotlin-reflect'
+//}
+
+//publishing {
+//    publications {
+//        KIO(MavenPublication) {
+//            from components.java
+//            groupId = project.group
+//            artifactId = project.archivesBaseName
+//            version = project.version
+//        }
+//    }
+//}
+
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.multiplatform'
 }
 
-archivesBaseName = 'kio'
+ext {
+    isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
+}
+
+archivesBaseName = 'it.msec.kio'
 group 'it.msec'
 version '0.6-SNAPSHOT'
 
-apply plugin: 'kotlin'
+kotlin {
+    jvm {
+        compilations.main.kotlinOptions {
+            jvmTarget = "1.8"
+        }
+        compilations.test.kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+    js {
+        nodejs()
+        browser()
+        compilations.main.kotlinOptions {
+            sourceMap = true
+            moduleKind = "umd"
+        }
+        compilations.test.kotlinOptions {
+            moduleKind = "umd"
+        }
+    }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+//    targets.all {
+//        if (name != 'metadata') {
+//            compilations.test.kotlinOptions {
+//                freeCompilerArgs += ["-XXLanguage:+NewInference"]
+//            }
+//        }
+//    }
 
-    testCompile "junit:junit"
-    testCompile 'com.willowtreeapps.assertk:assertk-jvm'
-    testCompile 'org.jetbrains.kotlin:kotlin-reflect'
-}
+    def kotlin_coroutines_version = '1.3.3'
 
-publishing {
-    publications {
-        KIO(MavenPublication) {
-            from components.java
-            groupId = project.group
-            artifactId = project.archivesBaseName
-            version = project.version
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$kotlin_coroutines_version"
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+                compileOnly kotlin('reflect')
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test-junit')
+                implementation kotlin('reflect')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
+                implementation 'com.willowtreeapps.assertk:assertk-jvm:0.20'
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlin_coroutines_version"
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlin_coroutines_version"
+            }
         }
     }
 }
+
+task test {
+    dependsOn(jvmTest, jsTest)
+}
+

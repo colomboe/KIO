@@ -7,8 +7,8 @@ import it.msec.kio.internals.KIOInternals.eager
 import it.msec.kio.internals.KIOInternals.lazySuspended
 import it.msec.kio.result.Result
 import it.msec.kio.result.Success
-import it.msec.kio.runtime.RuntimeSuspended.NeverHereException
-import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
+import it.msec.kio.runtime.CoroutineInterpreter.NeverHereException
+import it.msec.kio.runtime.CoroutineInterpreter.unsafeRunSuspended
 import kotlinx.coroutines.async
 
 sealed class Race3Result<R1, R2, R3> {

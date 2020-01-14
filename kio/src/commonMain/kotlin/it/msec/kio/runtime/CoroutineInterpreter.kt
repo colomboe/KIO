@@ -3,34 +3,15 @@ package it.msec.kio.runtime
 import it.msec.kio.*
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
-import it.msec.kio.result.get
+import it.msec.kio.result.Success
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
-object RuntimeSuspended : KIORuntime {
+object CoroutineInterpreter {
 
-    override fun <A> unsafeRunSyncAndGet(kio: UIO<A>): A = runBlocking { execute(kio, Unit) }.get()
-
-    override fun <E, A> unsafeRunSync(kio: IO<E, A>): Result<E, A> = runBlocking { execute(kio, Unit) }
-
-    override fun <R, E, A> unsafeRunSync(kio: KIO<R, E, A>, r: R): Result<E, A> = runBlocking { execute(kio, r) }
-
-    fun <A> unsafeRunSyncAndGet(kio: UIO<A>, ctx: CoroutineContext = EmptyCoroutineContext) =
-            runBlocking(ctx) { execute(kio, Unit) }.get()
-
-    fun <E, A> unsafeRunSync(kio: IO<E, A>, ctx: CoroutineContext = EmptyCoroutineContext) =
-            runBlocking(ctx) { execute(kio, Unit) }
-
-    fun <R, E, A> unsafeRunSync(kio: KIO<R, E, A>, env: R, ctx: CoroutineContext = EmptyCoroutineContext) =
-            runBlocking(ctx) { execute(kio, env) }
-
-    suspend fun <R, E, A> CoroutineScope.unsafeRunSuspended(kio: KIO<R, E, A>, env: R) =
-            execute(kio, env)
+    suspend fun <R, E, A> CoroutineScope.unsafeRunSuspended(kio: KIO<R, E, A>, env: R) = execute(kio, env)
 
     @Suppress("UNCHECKED_CAST")
-    private suspend fun <R, E, A> CoroutineScope.execute(k: KIO<R, E, A>, initialR: R): Result<E, A> {
+    suspend fun <R, E, A> CoroutineScope.execute(k: KIO<R, E, A>, initialR: R): Result<E, A> {
 
         val stack = RuntimeStack()
 
@@ -70,7 +51,14 @@ object RuntimeSuspended : KIORuntime {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <R, E, A ,B> successMapToF(m: SuccessMap<R, E, A, B>): RuntimeFn = {
+        Eager<R, E, A>(when (it) {
+            is Success<*> -> Success(m.mapF(it.value as B))
+            is Failure<*> -> it as Failure<E>
+        })
+    }
+
     object NeverHereException : RuntimeException()
 
 }
-

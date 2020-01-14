@@ -2,7 +2,7 @@
 A simple, lightweight IO monad implementation for Kotlin inspired to the effect-rotation based ZIO library for Scala.
 
 ### Blog posts:
-Introducing KIO: [https://www.msec.it/blog/introducing-kio/](https://www.msec.it/blog/introducing-kio/)
+Introducing KIO: [https://www.msec.it/blog/introducing-it.msec.kio/](https://www.msec.it/blog/introducing-it.msec.kio/)
 
 Comprehension-like syntax: [https://www.msec.it/blog/comprehension-like-syntax-in-kotlin/](https://www.msec.it/blog/comprehension-like-syntax-in-kotlin/)
 
@@ -47,7 +47,7 @@ KIO provides a IO monad-like implementation specific for Kotlin with the followi
 <dependencies>
   <dependency>
     <groupId>it.msec.KIO</groupId>
-    <artifactId>kio</artifactId>
+    <artifactId>it.msec.kio</artifactId>
     <version>0.5</version>
   </dependency>
 </dependencies>
