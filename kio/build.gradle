@@ -1,35 +1,3 @@
-//plugins {
-//    id 'org.jetbrains.kotlin.jvm'
-//}
-
-//apply plugin: 'kotlin'
-//
-//dependencies {
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
-//
-//    testCompile "junit:junit"
-//    testCompile 'com.willowtreeapps.assertk:assertk-jvm'
-//    testCompile 'org.jetbrains.kotlin:kotlin-reflect'
-//}
-
-//publishing {
-//    publications {
-//        KIO(MavenPublication) {
-//            from components.java
-//            groupId = project.group
-//            artifactId = project.archivesBaseName
-//            version = project.version
-//        }
-//    }
-//}
-
-//buildscript {
-//    dependencies {
-//        classpath "com.moowork.gradle:gradle-node-plugin:$gradle_node_version"
-//    }
-//}
-
 plugins {
     id 'maven-publish'
     id 'org.jetbrains.kotlin.multiplatform'
@@ -84,6 +52,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
             }
         }
         jvmMain {
@@ -120,6 +89,3 @@ kotlin {
 task test {
     dependsOn(jvmTest, jsTest)
 }
-//
-//apply from: rootProject.file('gradle/node-js.gradle')
-//apply from: rootProject.file('gradle/test-mocha-js.gradle')

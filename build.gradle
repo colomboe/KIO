@@ -3,8 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.multiplatform' version '1.3.61' apply false
 }
 
-//archivesBaseName = 'it.msec.kio-project'
-
 group 'it.msec'
 version '0.6-SNAPSHOT'
 description = 'KIO library'
@@ -14,34 +12,3 @@ allprojects {
         mavenCentral()
     }
 }
-
-//allprojects {
-//
-//    apply plugin: 'maven'
-//    apply plugin: 'maven-publish'
-//    apply plugin: 'kotlin'
-//
-//    repositories {
-//        mavenCentral()
-//    }
-//    compileKotlin {
-//        kotlinOptions.jvmTarget = "1.8"
-////        kotlinOptions.freeCompilerArgs += '-XXLanguage:+NewInference'
-//    }
-//    compileTestKotlin {
-//        kotlinOptions.jvmTarget = "1.8"
-////        kotlinOptions.freeCompilerArgs += '-XXLanguage:+NewInference'
-//    }
-//}
-
-//subprojects {
-//    dependencies {
-//        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-//        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
-//
-//        testCompile "junit:junit:4.12"
-//        testCompile 'com.willowtreeapps.assertk:assertk-jvm:0.20'
-//        testCompile 'org.jetbrains.kotlin:kotlin-reflect:1.3.61'
-//    }
-//}
-//

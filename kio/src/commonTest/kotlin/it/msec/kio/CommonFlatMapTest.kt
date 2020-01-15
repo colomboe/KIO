@@ -1,11 +1,11 @@
 package it.msec.kio
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import it.msec.kio.runtime.RuntimeSuspended.unsafeRunPromiseAndGet
+import it.msec.kio.result.get
+import runEffectAndAssert
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class FlatMapTest {
+class CommonFlatMapTest {
 
     @Test
     fun nested_flatMap_and_lazy_constructors() {
@@ -17,8 +17,10 @@ class FlatMapTest {
                 }
 
         val kio = loop(20)
-        val promise = unsafeRunPromiseAndGet(kio)
-        promise.then { v -> assertThat(v).isEqualTo(6765) }
+
+        return runEffectAndAssert(kio, Unit) { result ->
+            assertEquals(6765, result.get())
+        }
     }
 
     @Test
@@ -28,8 +30,9 @@ class FlatMapTest {
         var kio = effect { 33 }
         for (i in 1..iterations) kio = kio.flatMap { effect { it + 1 } }
 
-        val promise = unsafeRunPromiseAndGet(kio)
-        promise.then { v -> assertThat(v).isEqualTo(33 + iterations) }
+        runEffectAndAssert(kio, Unit) { result ->
+            assertEquals(33 + iterations, result.get())
+        }
     }
 
 }
