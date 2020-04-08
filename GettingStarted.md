@@ -1,7 +1,7 @@
 # Getting started with KIO
 
 KIO is a side effect wrapper that suspends side effects in order to provide referential transparency even when
-your code need to interact with the outside world. The `KIO` data type has three type parameters:
+your code needs to interact with the outside world. The `KIO` data type has three type parameters:
  - `R`: represents the type you are going to inject in the environment in order to provide the needed dependencies, 
  configurations or parameters.
  - `E`: represents the data type that is used when the monad is in the "failure" state.
