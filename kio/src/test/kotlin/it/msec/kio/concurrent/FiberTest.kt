@@ -1,7 +1,7 @@
 package it.msec.kio.concurrent
 
 import it.msec.kio.*
-import it.msec.kio.common.tuple.T
+import it.msec.kio.common.tuple.T2
 import it.msec.kio.result.get
 import it.msec.kio.runtime.RuntimeSuspended
 import kotlinx.coroutines.delay
@@ -33,7 +33,7 @@ class FiberTest {
         val prog = effect { println("Result:") }
                 .flatMap { first.fork() }
                 .flatMapT { second.fork() }
-                .flatMap { (a, b) -> a.await().flatMap { ra -> b.await().map { rb -> T(ra, rb) } } }
+                .flatMap { (a, b) -> mapN(a.await(), b.await(), ::T2) }
                 .flatMap { (a, b) ->
                     effect {
                         println(a)
