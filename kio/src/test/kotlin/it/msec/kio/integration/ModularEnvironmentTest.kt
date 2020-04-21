@@ -36,3 +36,23 @@ class ModularEnvironmentTest {
     private fun callDep2(p: Int): URIO<Dep2, String> = ask { env -> env.doDep2(p) }
 
 }
+
+class ModularEnvironmentWithGenericEnvTest {
+
+    @Test
+    fun `environment can be composed by using multiple modules (interfaces)`() {
+
+        val program = programDependingFromBoth<MyEnv>()
+        val r = Runtime.unsafeRunSync(program, MyEnv).get()
+        assertThat(r).isEqualTo("Hello 4")
+    }
+
+    private fun <R> programDependingFromBoth(): URIO<R, String>
+            where R : Dep1, R : Dep2 =
+        callDep1<R>("John").flatMap(this::callDep2)
+
+    private fun <R : Dep1> callDep1(p: String): URIO<R, Int> = withPureR { doDep1(p) }
+
+    private fun <R : Dep2> callDep2(p: Int): URIO<R, String> = withR { doDep2(p) }
+
+}
