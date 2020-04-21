@@ -68,7 +68,7 @@ inline fun <R, E, A> withR(crossinline f: R.() -> KIO<R, E, A>): KIO<R, E, A> = 
 
 inline fun <R, A> withPureR(crossinline f: R.() -> A): URIO<R, A> = doAskR { justR(f(it)) }
 
-inline infix fun <R, E, A, B> KIO<R, E, A>.map(noinline f: (A) -> B): KIO<R, E, B> = doSuccessMap(f)
+infix fun <R, E, A, B> KIO<R, E, A>.map(f: (A) -> B): KIO<R, E, B> = doSuccessMap(f)
 
 inline infix fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
     when (it) {
@@ -84,7 +84,7 @@ inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L
     }
 }
 
-inline fun <R, E, A, B> KIO<R, E, A>.followedBy(k: KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
+fun <R, E, A, B> KIO<R, E, A>.followedBy(k: KIO<R, E, B>): KIO<R, E, B> = doFlatMap {
     when (it) {
         is Success -> k
         is Failure -> eager(it)
