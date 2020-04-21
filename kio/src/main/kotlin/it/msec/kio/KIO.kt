@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 
 inline class DeferredResult<E, A>(val deferred: Deferred<Result<E, A>> )
+typealias RunFn<R, E, A> = (KIO<R, E, A>, R) -> Result<E, A>
 
 sealed class KIO<in R, out E, out A> {
     companion object
@@ -18,7 +19,7 @@ data class SuccessMap<R, E, A, B>(val mapF: (B) -> A, val prev: KIO<R, E, B>, va
 data class Attempt<R, A>(val urio: KIO<R, Nothing, A>): KIO<R, Throwable, A>()
 data class ProvideR<R, E, A>(val r: R, val prev: KIO<R, E, A>): IO<E, A>()
 data class RestoreR<R, E, A>(val r: R, val value: Result<E, A>): KIO<R, E, A>()
-data class Fork<R, E, A>(val forkF: suspend CoroutineScope.() -> Deferred<Result<E, A>>): KIO<R, Nothing, DeferredResult<E, A>>()
+data class Fork<R, E, A>(val program: KIO<R, E, A>, val env: R): KIO<R, Nothing, DeferredResult<E, A>>()
 data class Await<R, E, A>(val fiber: DeferredResult<E, A>): KIO<R, E, A>()
 
 typealias IO<E, A> = KIO<Any, E, A>

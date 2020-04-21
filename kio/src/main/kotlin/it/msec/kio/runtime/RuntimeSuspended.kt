@@ -6,6 +6,7 @@ import it.msec.kio.result.Result
 import it.msec.kio.result.Success
 import it.msec.kio.result.get
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -67,7 +68,9 @@ object RuntimeSuspended : KIORuntime {
                     current.value
                 }
                 is Fork<*, *, *> -> {
-                    val deferred = current.forkF(this)
+                    val program = current.program as KIO<Any?, Any?, Any?>
+                    val env = current.env
+                    val deferred = this.async { execute(program, env) }
                     Success(DeferredResult(deferred))
                 }
                 is Await<*, *, *> -> {
