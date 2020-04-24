@@ -1,6 +1,7 @@
 package it.msec.kio.runtime
 
 import it.msec.kio.*
+import it.msec.kio.common.coroutines.joinFirst
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
 import it.msec.kio.result.Success
@@ -73,8 +74,13 @@ object RuntimeSuspended : KIORuntime {
                     val deferred = this.async { execute(program, env) }
                     Success(DeferredResult(deferred))
                 }
-                is Await<*, *, *> -> {
-                    current.fiber.deferred.await()
+                is Await<*, *, *> -> current.fiber.deferred.await()
+                is Race<*, *, *, *, *, *, *> -> {
+                    val winner = joinFirst(current.d1.deferred, current.d2.deferred)
+                    when (winner) {
+                        current.d1.deferred -> (current.f1 as (Result<Any?, Any?>) -> KIO<Any?, Any?, Any?>)(winner.getCompleted())
+                        else -> (current.f2 as (Result<Any?, Any?>) -> KIO<Any?, Any?, Any?>)(winner.getCompleted())
+                    }
                 }
                 else -> throw NeverHereException
             }

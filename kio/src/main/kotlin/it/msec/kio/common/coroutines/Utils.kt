@@ -11,3 +11,12 @@ suspend fun <T, E : Deferred<T>> Iterable<E>.joinFirst(): Deferred<T> = select {
         }
     }
 }
+
+suspend fun <T, E : Deferred<T>> joinFirst(vararg ds: E): Deferred<T> = select {
+    for (deferred in ds) {
+        deferred.onAwait {
+            ds.filterNot { it == deferred }.forEach { it.cancel() }
+            deferred
+        }
+    }
+}
