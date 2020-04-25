@@ -17,24 +17,24 @@ class CoroutineContextTest {
         33
     }
 
-    private val threeTimes =
-            parMapN(cpuIntensiveEffect, cpuIntensiveEffect, cpuIntensiveEffect) { x, _, _ -> x }.recover { 0 }
+    private val twoTimes =
+            parMapN(cpuIntensiveEffect, cpuIntensiveEffect) { x, _ -> x }.recover { 0 }
 
     @Test
     fun `single-thread context`() {
 
         val singleThreadCtx = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
-        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(threeTimes, singleThreadCtx) }
+        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(twoTimes, singleThreadCtx) }
 
         assertThat(result).isEqualTo(33)
-        assertThat(millis).isBetween(1500, 2000)
+        assertThat(millis).isBetween(1000, 1400)
     }
 
     @Test
     fun `multi-thread context`() {
 
         val multiThreadCtx = Executors.newFixedThreadPool(3).asCoroutineDispatcher()
-        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(threeTimes, multiThreadCtx) }
+        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(twoTimes, multiThreadCtx) }
 
         assertThat(result).isEqualTo(33)
         assertThat(millis).isBetween(500, 1000)

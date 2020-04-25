@@ -3,7 +3,6 @@ package it.msec.kio.concurrent
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
-import it.msec.kio.common.tuple.T
 import it.msec.kio.recover
 import it.msec.kio.runAndGetTimeMillis
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSyncAndGet
@@ -49,20 +48,20 @@ class ParMapTest {
         assertThat(millis).isBetween(500, 800)
     }
 
-    @Test
-    fun `parMap maps 3 effects in parallel`() {
-
-        val e1 = testEffect(500, 10)
-        val e2 = testEffect(500, "Hello")
-        val e3 = testEffect(500, T("be", "box"))
-
-        val out = parMapN(e1, e2, e3) { a, b, c ->
-            "$b $a (${c._1} ${c._2})"
-        }.recover { "" }
-
-        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(out) }
-
-        assertThat(result).isEqualTo("Hello 10 (be box)")
-        assertThat(millis).isBetween(500, 700)
-    }
+//    @Test
+//    fun `parMap maps 3 effects in parallel`() {
+//
+//        val e1 = testEffect(500, 10)
+//        val e2 = testEffect(500, "Hello")
+//        val e3 = testEffect(500, T("be", "box"))
+//
+//        val out = parMapN(e1, e2, e3) { a, b, c ->
+//            "$b $a (${c._1} ${c._2})"
+//        }.recover { "" }
+//
+//        val (result, millis) = runAndGetTimeMillis { unsafeRunSyncAndGet(out) }
+//
+//        assertThat(result).isEqualTo("Hello 10 (be box)")
+//        assertThat(millis).isBetween(500, 700)
+//    }
 }

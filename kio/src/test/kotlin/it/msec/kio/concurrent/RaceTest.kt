@@ -3,7 +3,7 @@ package it.msec.kio.concurrent
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
-import it.msec.kio.map
+import it.msec.kio.just
 import it.msec.kio.result.get
 import it.msec.kio.runAndGetTimeMillis
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSync
@@ -18,19 +18,17 @@ class RaceTest {
 
         val f1 = suspended {
             delay(500)
-            println("AAA")
             33
         }
 
         val f2 = suspended {
             delay(3000)
-            println("BBB")
             55
         }
 
         val raceResult = race(f1, f2,
-                { it.map { i -> "First! $i" } },
-                { it.map { i -> "Second! $i" } }
+                { just("First! $it") },
+                { just("Second! $it") }
         )
 
         val (output, millis) = runAndGetTimeMillis { unsafeRunSync(raceResult).get() }
@@ -52,8 +50,8 @@ class RaceTest {
         }
 
         val raceResult = race(f1, f2,
-                { it.map { i -> "First! $i" } },
-                { it.map { i -> "Second! $i" } }
+                { just("First! $it") },
+                { just("Second! $it") }
         )
 
         val (output, millis) = runAndGetTimeMillis { unsafeRunSync(raceResult).get() }

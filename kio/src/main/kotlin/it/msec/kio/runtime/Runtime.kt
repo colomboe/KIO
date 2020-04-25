@@ -57,6 +57,7 @@ object Runtime : KIORuntime {
                 is LazySuspended<*, *, *> -> throw SuspensionNotSupported
                 is Fork<*, *, *> -> throw SuspensionNotSupported
                 is Await<*, *, *> -> throw SuspensionNotSupported
+                is Cancel<*, *, *> -> throw SuspensionNotSupported
                 is Race<*, *, *, *, *, *, *> -> throw SuspensionNotSupported
                 else -> throw NeverHereException
             }

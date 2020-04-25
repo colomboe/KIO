@@ -1,7 +1,6 @@
 package it.msec.kio.runtime
 
 import it.msec.kio.*
-import it.msec.kio.common.coroutines.joinFirst
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
 import it.msec.kio.result.Success
@@ -9,6 +8,7 @@ import it.msec.kio.result.get
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.selects.select
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -72,14 +72,22 @@ object RuntimeSuspended : KIORuntime {
                     val program = current.program as KIO<Any?, Any?, Any?>
                     val env = current.env
                     val deferred = this.async { execute(program, env) }
-                    Success(DeferredResult(deferred))
+                    Success(Fiber(deferred))
                 }
                 is Await<*, *, *> -> current.fiber.deferred.await()
+                is Cancel<*, *, *> -> Success(current.fiber.deferred.cancel())
                 is Race<*, *, *, *, *, *, *> -> {
-                    val winner = joinFirst(current.d1.deferred, current.d2.deferred)
-                    when (winner) {
-                        current.d1.deferred -> (current.f1 as (Result<Any?, Any?>) -> KIO<Any?, Any?, Any?>)(winner.getCompleted())
-                        else -> (current.f2 as (Result<Any?, Any?>) -> KIO<Any?, Any?, Any?>)(winner.getCompleted())
+                    val d1 = current.fiber1 as Fiber<Any?, Any?>
+                    val d2 = current.fiber2 as Fiber<Any?, Any?>
+                    val f1 = current.f1  as (Result<Any?, Any?>, Fiber<Any?, Any?>) -> KIO<Any?, Any?, Any?>
+                    val f2 = current.f2  as (Result<Any?, Any?>, Fiber<Any?, Any?>) -> KIO<Any?, Any?, Any?>
+                    select {
+                        d1.deferred.onAwait {
+                            f1(d1.deferred.getCompleted(), d2)
+                        }
+                        d2.deferred.onAwait {
+                            f2(d2.deferred.getCompleted(), d1)
+                        }
                     }
                 }
                 else -> throw NeverHereException
