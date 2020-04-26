@@ -25,7 +25,7 @@ class RaceTest {
     }
 
     @Test
-    fun firstEndsWithSuccess() {
+    fun `first ends with success`() {
 
         val k1 = waitAndSucceed(500, 33)
         val k2 = waitAndSucceed(2000, 44)
@@ -36,7 +36,7 @@ class RaceTest {
     }
 
     @Test
-    fun firstEndsWithFailure() {
+    fun `first ends with failure`() {
 
         val k1 = waitAndFail(500, "BOOOM!!!")
         val k2 = waitAndSucceed(2000, 44)
@@ -47,7 +47,7 @@ class RaceTest {
     }
 
     @Test
-    fun secondEndsWithSuccess() {
+    fun `second ends with success`() {
 
         val k1 = waitAndSucceed(2000, 44)
         val k2 = waitAndSucceed(500, 33)
@@ -58,7 +58,7 @@ class RaceTest {
     }
 
     @Test
-    fun secondEndsWithFailure() {
+    fun `second ends with failure`() {
 
         val k1 = waitAndSucceed(2000, 44)
         val k2 = waitAndFail(500, "BOOOM!!!")
@@ -69,7 +69,7 @@ class RaceTest {
     }
 
     @Test
-    fun bothEndWithFailure() {
+    fun `both end with failure`() {
 
         val k1: IO<String, Int> = waitAndFail(500, "BOOOM!!!")
         val k2: IO<String, Int> = waitAndFail(2000, "BOOOM2!!!")
@@ -83,7 +83,7 @@ class RaceTest {
     }
 
     @Test
-    fun firstEndsWithUnexpectedException() {
+    fun `first ends with unexpected exception`() {
 
         val k1 = waitAndThrow(500, "Throw BOOOM!!!")
         val k2 = waitAndSucceed(2000, 44)
@@ -94,7 +94,7 @@ class RaceTest {
     }
 
     @Test
-    fun bothEndWithUnexpectedException() {
+    fun `both end with an unexpected exception`() {
 
         val k1: UIO<Int> = waitAndThrow(500, "Throw BOOOM!!!")
         val k2: UIO<Int> = waitAndThrow(2000, "Throw BOOOM2!!!")
@@ -106,7 +106,7 @@ class RaceTest {
     }
 
     @Test
-    fun bothEndWithUnexpectedExceptionAttempted() {
+    fun `both end with an unexpected exception but with attempt`() {
 
         val k1: UIO<Int> = waitAndThrow(500, "Throw BOOOM!!!")
         val k2: UIO<Int> = waitAndThrow(2000, "Throw BOOOM2!!!")
@@ -118,7 +118,7 @@ class RaceTest {
     }
 
     @Test
-    fun raceWithThreeWithSuccess() {
+    fun `successful race with three`() {
 
         val k1: IO<String, Int> = waitAndFail(500, "BOOOM!!!")
         val k2: IO<String, Int> = waitAndFail(1000, "BOOOM2!!!")
@@ -130,7 +130,7 @@ class RaceTest {
     }
 
     @Test
-    fun raceWithThreeWithFailure() {
+    fun `race with three all failing`() {
 
         val k1: IO<String, Int> = waitAndFail(500, "BOOOM!!!")
         val k2: IO<String, Int> = waitAndFail(1500, "BOOOM2!!!")
@@ -145,7 +145,7 @@ class RaceTest {
     }
 
     @Test
-    fun raceWithThreeWithCancellation() {
+    fun `race with three with cancellation`() {
 
         val k1: IO<String, Int> = waitAndSucceed(500, 33)
         val k2: IO<String, Int> = waitAndFail(1500, "BOOOM2!!!")
