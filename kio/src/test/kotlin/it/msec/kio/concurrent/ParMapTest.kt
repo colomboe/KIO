@@ -3,11 +3,11 @@ package it.msec.kio.concurrent
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
+import it.msec.kio.*
 import it.msec.kio.common.tuple.T
-import it.msec.kio.recover
-import it.msec.kio.runAndGetTimeMillis
+import it.msec.kio.result.Failure
+import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSync
 import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSyncAndGet
-import it.msec.kio.suspended
 import kotlinx.coroutines.delay
 import org.junit.Test
 
@@ -17,6 +17,8 @@ class ParMapTest {
         delay(ms)
         value
     }
+
+    private fun <A, E> failingTestEffect(ms: Long, error: E): IO<E, A> = suspended { delay(ms) }.flatMap { failure(error) }
 
     @Test
     fun `parMapN maps multiple effects in parallel`() {
@@ -47,6 +49,20 @@ class ParMapTest {
 
         assertThat(result).isEqualTo("Hello 10")
         assertThat(millis).isBetween(500, 800)
+    }
+
+    @Test
+    fun `parMap maps 2 effects in parallel with failure`() {
+
+        val e1: IO<String, Int> = testEffect(500, 10)
+        val e2: IO<String, Int> = failingTestEffect(1000, "Hello")
+
+        val out = parMapN(e1, e2) { a, b -> "$b $a" }
+
+        val (result, millis) = runAndGetTimeMillis { unsafeRunSync(out) }
+
+        assertThat((result as Failure).error).isEqualTo("Hello")
+        assertThat(millis).isBetween(1000, 1500)
     }
 
     @Test

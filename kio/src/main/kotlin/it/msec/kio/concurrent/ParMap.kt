@@ -1,56 +1,37 @@
 package it.msec.kio.concurrent
 
 import it.msec.kio.KIO
-import it.msec.kio.ask
-import it.msec.kio.internals.KIOInternals.lazySuspended
-import it.msec.kio.result.Failure
-import it.msec.kio.result.Success
-import it.msec.kio.runtime.RuntimeSuspended.unsafeRunSuspended
-import kotlinx.coroutines.async
+import it.msec.kio.common.list.sequence
+import it.msec.kio.flatMap
+import it.msec.kio.map
+import it.msec.kio.to
 
-@Suppress("UNCHECKED_CAST")
-inline fun <R, E, A1, A2, B> parMapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, crossinline f: (A1, A2) -> B): KIO<R, List<E>, B> =
-        ask { r ->
-            lazySuspended {
+fun <R1, E1, A1, R2 : R1, E2 : E1, A2, B> parMapN(a: KIO<R1, E1, A1>, b: KIO<R2, E2, A2>, f: (A1, A2) -> B): KIO<R2, E1, B> =
+        a.fork()                  to  { fa ->
+        b.fork()                  to  { fb ->
+        fa.awaitR<R1, E1, A1>()   to  { ra ->
+        fb.awaitR<R2, E2, A2>()   map { rb ->
+        f(ra, rb)
+}}}}
 
-                val results = listOf(a, b)
-                        .map { async { unsafeRunSuspended(it, r) } }
-                        .map { it.await() }
+fun <R1, E1, A1, R2 : R1, E2 : E1, A2, R3 : R2, E3 : E2, A3, B> parMapN(
+                                         a: KIO<R1, E1, A1>,
+                                         b: KIO<R2, E2, A2>,
+                                         c: KIO<R3, E3, A3>,
+                                         f: (A1, A2, A3) -> B): KIO<R3, E1, B> =
+        a.fork()                  to  { fa ->
+        b.fork()                  to  { fb ->
+        c.fork()                  to  { fc ->
+        fa.awaitR<R3, E1, A1>()   to  { ra ->
+        fb.awaitR<R3, E2, A2>()   to  { rb ->
+        fc.awaitR<R3, E3, A3>()   map { rc ->
+        f(ra, rb, rc)
+}}}}}}
 
-                if (results.all { it is Success })
-                    Success(f((results[0] as Success<A1>).value, (results[1] as Success<A2>).value))
-                else
-                    Failure(results.filterIsInstance<Failure<E>>().map { it.error })
-            }
-        }
-
-@Suppress("UNCHECKED_CAST")
-inline fun <R, E, A1, A2, A3, B> parMapN(a: KIO<R, E, A1>, b: KIO<R, E, A2>, c: KIO<R, E, A3>, crossinline f: (A1, A2, A3) -> B): KIO<R, List<E>, B> =
-        ask { r ->
-            lazySuspended {
-
-                val results = listOf(a, b, c)
-                        .map { async { unsafeRunSuspended(it, r) } }
-                        .map { it.await() }
-
-                if (results.all { it is Success })
-                    Success(f((results[0] as Success<A1>).value, (results[1] as Success<A2>).value, (results[2] as Success<A3>).value))
-                else
-                    Failure(results.filterIsInstance<Failure<E>>().map { it.error })
-            }
-        }
-
-inline fun <R, E, A, B> parMapN(vararg xs: KIO<R, E, A>, crossinline f: (List<A>) -> B): KIO<R, List<E>, B> =
-        ask { r ->
-            lazySuspended {
-
-                val results = xs
-                        .map { async { unsafeRunSuspended(it, r) } }
-                        .map { it.await() }
-
-                if (results.all { it is Success })
-                    Success(f(results.filterIsInstance<Success<A>>().map { it.value }))
-                else
-                    Failure(results.filterIsInstance<Failure<E>>().map { it.error })
-            }
-        }
+fun <R, E, A, B> parMapN(vararg xs: KIO<R, E, A>, f: (List<A>) -> B): KIO<R, E, B> =
+        xs.map { it.fork() }
+                .sequence()
+                .flatMap { fs -> fs
+                        .map { fiber -> fiber.awaitR<R, E, A>() }
+                        .sequence() }
+                .map(f)
