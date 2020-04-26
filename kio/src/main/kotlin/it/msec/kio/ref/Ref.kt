@@ -7,7 +7,11 @@ import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("DataClassPrivateConstructor")
 data class Ref<A> private constructor(private val value: AtomicReference<A>) {
-    constructor(initialValue: A) : this(AtomicReference(initialValue))
+
+    companion object {
+        fun <A> ref(value: A): UIO<Ref<A>> =
+                effect { Ref(AtomicReference(value)) }
+    }
 
     fun get(): UIO<A> = effect { value.get() }
 
