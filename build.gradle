@@ -18,11 +18,11 @@ allprojects {
     }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.freeCompilerArgs += '-XXLanguage:+NewInference'
+//        kotlinOptions.freeCompilerArgs += '-XXLanguage:+NewInference'
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.freeCompilerArgs += '-XXLanguage:+NewInference'
+//        kotlinOptions.freeCompilerArgs += '-XXLanguage:+NewInference'
     }
 }
 
