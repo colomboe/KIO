@@ -182,6 +182,41 @@ class CancellationTest {
         assertThat(millis).isBetween(0, 2000)
     }
 
+    @Test
+    fun `cancellation with nested fibers`() {
+
+        var releaseCounter = 0
+
+        val subfiber = doPrint("Starting sub-fiber")
+                .flatMap { doPrint("Acquiring resource 2").map { MySecondResource }.peek { doPrint("Acquired 2") } }
+                .bracket({ r -> doPrint("Releasing resource 2 ($r)").flatMap { effect { releaseCounter++ } } },
+                        { suspended { delay(5000) }.map { "done 2" } })
+                .flatMap { doPrint("Do other things 2") }
+                .peekError { doPrint("Don't do things") }
+                .fork()
+
+        val fiber = doPrint("Starting Fiber")
+                .flatMap { doPrint("Acquiring resource").map { MyResource }.peek { doPrint("Acquired") } }
+                .bracket({ r -> doPrint("Releasing resource ($r)").flatMap { effect { releaseCounter++ } } },
+                         { subfiber.flatMap { it.await() } })
+                .flatMap { doPrint("Do other things") }
+                .peekError { doPrint("Don't do things") }
+                .fork()
+
+        val prog = fiber
+                .peek { doPrint("Forked") }
+                .peek { suspended { delay(1000) } }
+                .peek { doPrint("Cancelling") }
+                .flatMap { it.cancel() }
+                .flatMap { doPrint("Cancelled") }
+                .flatMap { suspended { delay(1000) } }
+                .flatMap { doPrint("End") }
+
+        unsafeRunSync(prog)
+
+        assertThat(releaseCounter).isEqualTo(2)
+    }
+
     private fun doPrint(s: String) = effect { println("${Thread.currentThread().name} $s") }
 
 }

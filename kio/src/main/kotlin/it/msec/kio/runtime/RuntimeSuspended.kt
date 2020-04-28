@@ -105,7 +105,12 @@ object RuntimeSuspended : KIORuntime {
                     Success(Fiber(deferred))
                 }
 
-                is Await<*, *, *> -> current.fiber.deferred.await()
+                is Await<*, *, *> -> try {
+                    current.fiber.deferred.await()
+                }
+                catch(e: CancellationException) {
+                    Cancelled(e)
+                }
 
                 is Cancel<*, *, *> -> Success(current.fiber.deferred.cancel())
 
