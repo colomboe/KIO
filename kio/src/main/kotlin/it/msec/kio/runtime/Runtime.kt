@@ -58,6 +58,7 @@ object Runtime : KIORuntime {
                 is Fork<*, *, *> -> throw SuspensionNotSupported
                 is Await<*, *, *> -> throw SuspensionNotSupported
                 is Cancel<*, *, *> -> throw SuspensionNotSupported
+                is ForceState<*, *, *> -> throw SuspensionNotSupported
                 is Race<*, *, *, *, *, *, *> -> throw SuspensionNotSupported
                 else -> throw NeverHereException
             }

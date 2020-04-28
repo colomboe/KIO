@@ -2,6 +2,7 @@ package it.msec.kio.concurrent
 
 import it.msec.kio.*
 import it.msec.kio.internals.KIOInternals.eager
+import it.msec.kio.result.Cancelled
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
 import it.msec.kio.result.Success
@@ -24,12 +25,14 @@ fun <R1, R2 : R1, E1, E2 : E1, A1, A2, B> race(a1: KIO<R1, E1, A1>,
                     when (r) {
                         is Success<A1> -> other.cancelR<R2>().flatMap { eager<R2, Nothing, A1>(r) }.flatMap(f1)
                         is Failure<E1> -> other.awaitR<R2, E2, A2>().flatMap(f2)
+                        is Cancelled -> eager(r)
                     }
                 },
                 { r, other ->
                     when (r) {
                         is Success<A2> -> other.cancelR<R2>().flatMap { eager<R2, Nothing, A2>(r) }.flatMap(f2)
                         is Failure<E2> -> other.awaitR<R2, E1, A1>().flatMap(f1)
+                        is Cancelled -> eager(r)
                     }
                 }
         )

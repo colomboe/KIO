@@ -1,13 +1,8 @@
 package it.msec.kio.runtime
 
 import it.msec.kio.*
-import it.msec.kio.result.Failure
-import it.msec.kio.result.Result
-import it.msec.kio.result.Success
-import it.msec.kio.result.get
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import it.msec.kio.result.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.selects.select
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -37,45 +32,83 @@ object RuntimeSuspended : KIORuntime {
 
         val stack = RuntimeStack()
 
+        var ignoreCancellation = false
         var r: Any? = initialR
         var current: Any = k
         while (true) {
             current = when (current) {
+
                 is Eager<*, *, *> -> current.value
-                is Lazy<*, *, *> -> try { current.valueF() } catch(t: Throwable) { Failure(t) }
-                is LazySuspended<*, *, *> -> try { current.suspendedF(this) } catch(t: Throwable) { Failure(t) }
+
+                is Lazy<*, *, *> -> try {
+                    val newResult = current.valueF()
+                    if (ignoreCancellation || isActive) newResult else Cancelled(CancellationException())
+                } catch (c: CancellationException) {
+                    Cancelled(c)
+                } catch (t: Throwable) {
+                    Failure(t)
+                }
+
+                is LazySuspended<*, *, *> -> try {
+                    val suspendedF = current.suspendedF
+                    val newResult: Any = if (ignoreCancellation)
+                        withContext(NonCancellable) { suspendedF.invoke(this) }
+                    else
+                        suspendedF(this)
+                    if (ignoreCancellation || isActive) newResult else Cancelled(CancellationException())
+                } catch (c: CancellationException) {
+                    Cancelled(c)
+                } catch (t: Throwable) {
+                    Failure(t)
+                }
+
                 is AskR<*, *, *> -> (current.accessF as (R) -> KIO<R, *, *>)(r as R)
+
                 is SuccessMap<*, *, *, *> -> {
                     stack.push(successMapToF(current))
                     current.prev
                 }
+
                 is FlatMap<*, *, *, *, *> -> {
                     stack.push(current.flatMapF as RuntimeFn)
                     current.prev
                 }
+
+                is ForceState<*, *, *> -> {
+                    ignoreCancellation = current.ignoreCancellation
+                    current.result
+                }
+
                 is Attempt<*, *> -> current.urio
+
                 is Result<*, *> -> {
                     val fn = stack.pop()
                     if (fn != null) fn(current) else return current as Result<E, A>
                 }
+
                 is ProvideR<*, *, *> -> {
                     val prevR = r
                     stack.push { result -> RestoreR(prevR, result) }
                     r = current.r
                     current.prev
                 }
+
                 is RestoreR<*, *, *> -> {
                     r = current.r
                     current.value
                 }
+
                 is Fork<*, *, *> -> {
                     val program = current.program as KIO<Any?, Any?, Any?>
                     val env = current.env
                     val deferred = this.async { execute(program, env) }
                     Success(Fiber(deferred))
                 }
+
                 is Await<*, *, *> -> current.fiber.deferred.await()
+
                 is Cancel<*, *, *> -> Success(current.fiber.deferred.cancel())
+
                 is Race<*, *, *, *, *, *, *> -> {
                     val d1 = current.fiber1 as Fiber<Any?, Any?>
                     val d2 = current.fiber2 as Fiber<Any?, Any?>
@@ -90,6 +123,7 @@ object RuntimeSuspended : KIORuntime {
                         }
                     }
                 }
+
                 else -> throw NeverHereException
             }
         }

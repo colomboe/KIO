@@ -1,6 +1,7 @@
 package it.msec.kio.runtime
 
 import it.msec.kio.*
+import it.msec.kio.result.Cancelled
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Result
 import it.msec.kio.result.Success
@@ -18,6 +19,7 @@ interface KIORuntime {
         Eager<R, E, A>(when (it) {
             is Success<*> -> Success(m.mapF(it.value as B))
             is Failure<*> -> it as Failure<E>
+            is Cancelled -> it
         })
     }
 

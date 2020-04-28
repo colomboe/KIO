@@ -7,6 +7,7 @@ import it.msec.kio.internals.KIOInternals.doSuccessMap
 import it.msec.kio.internals.KIOInternals.eager
 import it.msec.kio.internals.KIOInternals.lazy
 import it.msec.kio.internals.KIOInternals.lazySuspended
+import it.msec.kio.result.Cancelled
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 
@@ -74,6 +75,7 @@ inline infix fun <R, E, A, B> KIO<R, E, A>.flatMap(crossinline f: (A) -> KIO<R, 
     when (it) {
         is Success -> f(it.value)
         is Failure -> eager(it)
+        is Cancelled -> eager(it)
     }
 }
 
@@ -81,6 +83,7 @@ inline fun <R, E, L, A> KIO<R, E, A>.mapError(crossinline f: (E) -> L): KIO<R, L
     when (it) {
         is Success -> it
         is Failure -> Failure(f(it.error))
+        is Cancelled -> it
     }
 }
 
@@ -88,6 +91,7 @@ fun <R, E, A, B> KIO<R, E, A>.followedBy(k: KIO<R, E, B>): KIO<R, E, B> = doFlat
     when (it) {
         is Success -> k
         is Failure -> eager(it)
+        is Cancelled -> eager(it)
     }
 }
 
@@ -95,6 +99,7 @@ fun <R, E, A> KIO<R, E, A>.swap(): KIO<R, A, E> = doResultMap {
     when (it) {
         is Success -> Failure(it.value)
         is Failure -> Success(it.error)
+        is Cancelled -> it
     }
 }
 
@@ -102,6 +107,7 @@ inline fun <R, E, A> KIO<R, E, A>.recover(crossinline f: (E) -> A): URIO<R, A> =
     when (it) {
         is Success -> eager(it)
         is Failure -> effectR<R, A> { f(it.error) }
+        is Cancelled -> eager(it)
     }
 }
 
@@ -109,6 +115,7 @@ inline fun <R, E, A, L> KIO<R, E, A>.tryRecover(crossinline f: (E) -> KIO<R, L, 
     when (it) {
         is Success -> eager(it)
         is Failure -> f(it.error)
+        is Cancelled -> eager(it)
     }
 }
 
@@ -119,6 +126,7 @@ inline fun <R, E, A, L, B> KIO<R, E, A>.bimap(crossinline f: (E) -> L, crossinli
     when (it) {
         is Success -> Success(g(it.value))
         is Failure -> Failure(f(it.error))
+        is Cancelled -> it
     }
 }
 
@@ -126,6 +134,7 @@ inline fun <R, E, A> KIO<R, E, A>.filterTo(crossinline e: (A) -> E, crossinline 
     when (it) {
         is Success -> if (f(it.value)) it else Failure(e(it.value))
         is Failure -> it
+        is Cancelled -> it
     }
 }
 

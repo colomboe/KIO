@@ -18,6 +18,7 @@ data class RestoreR<R, E, A>(val r: R, val value: Result<E, A>): KIO<R, E, A>()
 data class Fork<R, E, A>(val program: KIO<R, E, A>, val env: R): KIO<R, Nothing, Fiber<E, A>>()
 data class Await<R, E, A>(val fiber: Fiber<E, A>): KIO<R, E, A>()
 data class Cancel<R, E, A>(val fiber: Fiber<E, A>): KIO<R, Nothing, Unit>()
+data class ForceState<R, E, A>(val result: Result<E, A>, val ignoreCancellation: Boolean): KIO<R, E, A>()
 data class Race<R, E1, E2, A1, A2, E, A>(val fiber1: Fiber<E1, A1>,
                                          val fiber2: Fiber<E2, A2>,
                                          val f1: (Result<E1, A1>, Fiber<E2, A2>) -> KIO<R, E, A>,

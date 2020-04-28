@@ -6,6 +6,7 @@ import it.msec.kio.common.tuple.T3
 import it.msec.kio.internals.KIOInternals.doFlatMap
 import it.msec.kio.internals.KIOInternals.doResultMap
 import it.msec.kio.internals.KIOInternals.eager
+import it.msec.kio.result.Cancelled
 import it.msec.kio.result.Failure
 import it.msec.kio.result.Success
 
@@ -14,6 +15,7 @@ inline infix fun <R, E, A, B> KIO<R, E, A>.mapT(crossinline f: (A) -> B): KIO<R,
     when (it) {
         is Success -> Success(T(it.value, f(it.value)))
         is Failure -> it
+        is Cancelled -> it
     }
 }
 
@@ -22,6 +24,7 @@ inline infix fun <R, E, A, B> KIO<R, E, A>.flatMapT(crossinline f: (A) -> KIO<R,
     when (it) {
         is Success -> f(it.value).map { v -> T(it.value, v) }
         is Failure -> eager(it)
+        is Cancelled -> eager(it)
     }
 }
 
@@ -30,6 +33,7 @@ inline infix fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.mapT(crossinline f: (T2<A, 
     when (it) {
         is Success -> Success(T(it.value._1, it.value._2, f(it.value)))
         is Failure -> it
+        is Cancelled -> it
     }
 }
 
@@ -38,5 +42,6 @@ inline infix fun <R, E, A, B, C> KIO<R, E, T2<A, B>>.flatMapT(crossinline f: (T2
     when (it) {
         is Success -> f(it.value).map { v -> T(it.value._1, it.value._2, v) }
         is Failure -> eager(it)
+        is Cancelled -> eager(it)
     }
 }
