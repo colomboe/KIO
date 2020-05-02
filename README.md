@@ -48,7 +48,7 @@ KIO provides a IO monad-like implementation specific for Kotlin with the followi
   <dependency>
     <groupId>it.msec.KIO</groupId>
     <artifactId>kio</artifactId>
-    <version>0.6</version>
+    <version>0.7</version>
   </dependency>
 </dependencies>
 ```
