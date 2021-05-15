@@ -27,8 +27,3 @@ publishing {
         }
     }
 }
-compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
-    }
-}
