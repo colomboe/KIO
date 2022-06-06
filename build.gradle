@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.20'
 }
 
 archivesBaseName = 'kio-project'
@@ -27,11 +27,11 @@ allprojects {
 subprojects {
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2'
 
         testCompile "junit:junit:4.12"
-        testCompile 'com.willowtreeapps.assertk:assertk-jvm:0.22'
-        testCompile 'org.jetbrains.kotlin:kotlin-reflect:1.5.0'
+        testCompile 'com.willowtreeapps.assertk:assertk-jvm:0.24'
+        testCompile 'org.jetbrains.kotlin:kotlin-reflect:1.6.21'
     }
 }
 

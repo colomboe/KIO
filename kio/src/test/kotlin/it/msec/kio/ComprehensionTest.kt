@@ -85,7 +85,7 @@ class ComprehensionTest {
         fun doFirst(): UIO<Unit> = KIO.unit()
         fun doSecond(): UIO<String> = just("second")
         fun combine(s: String): String = "$s and $s"
-        fun doThird(s: String): UIO<String> = just(s.toUpperCase())
+        fun doThird(s: String): UIO<String> = just(s.uppercase())
         fun doFourth(s: String): UIO<String> = just(s.substring(1))
 
         val prog =
