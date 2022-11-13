@@ -121,9 +121,11 @@ object RuntimeSuspended : KIORuntime {
                     val f2 = current.f2  as (Result<Any?, Any?>, Fiber<Any?, Any?>) -> KIO<Any?, Any?, Any?>
                     select {
                         d1.deferred.onAwait {
+                            @OptIn(ExperimentalCoroutinesApi::class)
                             f1(d1.deferred.getCompleted(), d2)
                         }
                         d2.deferred.onAwait {
+                            @OptIn(ExperimentalCoroutinesApi::class)
                             f2(d2.deferred.getCompleted(), d1)
                         }
                     }
