@@ -94,6 +94,7 @@ class RaceTest {
     }
 
     @Test
+    @Suppress("UNCHECKED_CAST")
     fun `both end with an unexpected exception`() {
 
         val k1: UIO<Int> = waitAndThrow(500, "Throw BOOOM!!!")
@@ -101,7 +102,7 @@ class RaceTest {
 
         val raceResult: UIO<Int> = race(k1, k2, ::just, ::just)
 
-        val (output, millis) = runAndGetTimeMillis { unsafeRunSync(raceResult) }
+        val (output, _) = runAndGetTimeMillis { unsafeRunSync(raceResult) }
         assertThat((output as Failure<RuntimeException>).error.message).isEqualTo("Throw BOOOM2!!!")
     }
 
@@ -113,7 +114,7 @@ class RaceTest {
 
         val raceResult: Task<Int> = race(k1, k2, ::just, ::just).attempt()
 
-        val (output, millis) = runAndGetTimeMillis { unsafeRunSync(raceResult) }
+        val (output, _) = runAndGetTimeMillis { unsafeRunSync(raceResult) }
         assertThat((output as Failure).error.message).isEqualTo("Throw BOOOM2!!!")
     }
 
