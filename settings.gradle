@@ -1,3 +1,11 @@
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+        id 'me.champeau.gradle.jmh' version "${jmhPluginVersion}"
+        id 'io.morethan.jmhreport' version "${jmhReportPluginVersion}"
+    }
+}
+
 rootProject.name = 'kio-project'
 include 'kio'
 include 'benchmark'

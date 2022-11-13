@@ -1,10 +1,10 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 archivesBaseName = 'kio-project'
 group 'it.msec'
-version '0.9-SNAPSHOT'
+version kioVersion
 description = 'KIO library'
 
 allprojects {
@@ -15,22 +15,22 @@ allprojects {
     repositories {
         mavenCentral()
     }
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(javaVersion))
+        }
     }
 }
 
 subprojects {
     dependencies {
         implementation platform('org.jetbrains.kotlin:kotlin-bom')
-        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2'
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinCoroutinesVersion}"
 
-        testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.1'
-        testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'
-        testImplementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.20'
+        testImplementation "org.junit.vintage:junit-vintage-engine:${junitVersion}"
+        testImplementation "com.willowtreeapps.assertk:assertk-jvm:${assertKVersion}"
+        testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
     }
 }
 
