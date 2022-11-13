@@ -12,9 +12,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
 
-    testCompile "junit:junit"
-    testCompile 'com.willowtreeapps.assertk:assertk-jvm'
-    testCompile 'org.jetbrains.kotlin:kotlin-reflect'
+    testImplementation 'org.junit.vintage:junit-vintage-engine'
+    testImplementation 'com.willowtreeapps.assertk:assertk-jvm'
+    testImplementation 'org.jetbrains.kotlin:kotlin-reflect'
 }
 
 publishing {
