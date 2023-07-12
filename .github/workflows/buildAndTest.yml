@@ -4,12 +4,12 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v1
-    - name: Build the library
-      run: ./gradlew build
-    - name: Run all tests
-      run: ./gradlew test
+    - uses: actions/checkout@v2
+    - uses: gradle/gradle-build-action@v2
+      env:
+        CI: true
+      with:
+        arguments: build
+
